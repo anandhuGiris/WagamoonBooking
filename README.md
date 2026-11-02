@@ -172,8 +172,8 @@ During initial startup, the database is automatically seeded with default creden
 
 | Key | Description | Default / Example |
 |---|---|---|
-| `ConnectionStrings__DefaultConnection` | SQL Server connection string | `Server=.\\SQL_SERVER;Database=WagamonBookingDb;Trusted_Connection=True;TrustServerCertificate=True;` |
-| `DatabaseProvider` | Database engine (`SqlServer` or `Sqlite`) | `SqlServer` |
+| `ConnectionStrings__DefaultConnection` | Database connection string | `Host=ep-xxx.neon.tech;Database=neondb;Username=...;Password=...;SSL Mode=Require;Trust Server Certificate=true` |
+| `DatabaseProvider` | Database engine (`PostgreSql`, `Sqlite`, or `SqlServer`) | `PostgreSql` |
 | `Jwt__Key` | Secret key for signing JWT tokens | High-entropy secret key string |
 | `Jwt__Issuer` | Token issuer claim | `WagamonBookingApi` |
 | `Jwt__Audience` | Token audience claim | `WagamonBookingAdmin` |
