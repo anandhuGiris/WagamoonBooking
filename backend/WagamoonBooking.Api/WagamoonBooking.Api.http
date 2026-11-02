@@ -1,0 +1,6 @@
+@WagamoonBooking.Api_HostAddress = http://localhost:5225
+
+GET {{WagamoonBooking.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WagamoonBooking.Domain", "WagamoonBooking.Domain\WagamoonBooking.Domain.csproj", "{A9D13476-2CA6-45B0-97DC-5D73448B9F3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WagamoonBooking.Application", "WagamoonBooking.Application\WagamoonBooking.Application.csproj", "{4F625A5F-3FE9-4FA4-9D4E-90964895A068}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WagamoonBooking.Infrastructure", "WagamoonBooking.Infrastructure\WagamoonBooking.Infrastructure.csproj", "{44BC14F4-DC0F-4B9F-A5DF-ABD0BCCDF538}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WagamoonBooking.Api", "WagamoonBooking.Api\WagamoonBooking.Api.csproj", "{B6F2905F-0276-4057-8239-BFD75C9FC25B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WagamoonBooking.Tests", "WagamoonBooking.Tests\WagamoonBooking.Tests.csproj", "{D62C16DE-E38A-4E90-B60B-B2D1550CC3E6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A9D13476-2CA6-45B0-97DC-5D73448B9F3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9D13476-2CA6-45B0-97DC-5D73448B9F3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9D13476-2CA6-45B0-97DC-5D73448B9F3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9D13476-2CA6-45B0-97DC-5D73448B9F3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F625A5F-3FE9-4FA4-9D4E-90964895A068}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F625A5F-3FE9-4FA4-9D4E-90964895A068}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F625A5F-3FE9-4FA4-9D4E-90964895A068}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F625A5F-3FE9-4FA4-9D4E-90964895A068}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44BC14F4-DC0F-4B9F-A5DF-ABD0BCCDF538}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44BC14F4-DC0F-4B9F-A5DF-ABD0BCCDF538}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44BC14F4-DC0F-4B9F-A5DF-ABD0BCCDF538}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44BC14F4-DC0F-4B9F-A5DF-ABD0BCCDF538}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6F2905F-0276-4057-8239-BFD75C9FC25B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6F2905F-0276-4057-8239-BFD75C9FC25B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6F2905F-0276-4057-8239-BFD75C9FC25B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6F2905F-0276-4057-8239-BFD75C9FC25B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D62C16DE-E38A-4E90-B60B-B2D1550CC3E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D62C16DE-E38A-4E90-B60B-B2D1550CC3E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D62C16DE-E38A-4E90-B60B-B2D1550CC3E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D62C16DE-E38A-4E90-B60B-B2D1550CC3E6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
