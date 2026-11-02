@@ -105,7 +105,7 @@ export const LoginPage: React.FC = () => {
               <LandscapeRoundedIcon sx={{ color: '#ffffff', fontSize: 32 }} />
             </Box>
             <Typography variant="h5" sx={{ fontWeight: 800, color: '#0f172a' }}>
-              Wagamoon Booking
+              Wagamon Booking
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Property Management Administrator

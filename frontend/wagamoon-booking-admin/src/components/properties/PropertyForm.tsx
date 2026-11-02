@@ -130,7 +130,7 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({
                     {...register('location')}
                     label="Location *"
                     fullWidth
-                    placeholder="e.g. Wagamoon Lake Valley, Kerala"
+                    placeholder="e.g. Wagamon Lake Valley, Kerala"
                     slotProps={{
                       input: {
                         startAdornment: (

@@ -19,9 +19,9 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 
     public (string Token, DateTime ExpiresAt) GenerateToken(User user)
     {
-        var secret = _configuration["Jwt:Key"] ?? "WagamoonBookingSecretKey_ChangeInProduction_2026!#$";
-        var issuer = _configuration["Jwt:Issuer"] ?? "WagamoonBookingApi";
-        var audience = _configuration["Jwt:Audience"] ?? "WagamoonBookingAdmin";
+        var secret = _configuration["Jwt:Key"] ?? "WagamonBookingSecretKey_ChangeInProduction_2026!#$";
+        var issuer = _configuration["Jwt:Issuer"] ?? "WagamonBookingApi";
+        var audience = _configuration["Jwt:Audience"] ?? "WagamonBookingAdmin";
         var expirationMinutes = int.TryParse(_configuration["Jwt:DurationMinutes"], out var minutes) ? minutes : 1440; // 24 hours
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));

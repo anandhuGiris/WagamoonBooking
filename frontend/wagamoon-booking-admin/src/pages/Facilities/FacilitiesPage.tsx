@@ -169,7 +169,7 @@ export const FacilitiesPage: React.FC = () => {
             Property Facilities
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Manage reusable amenities that can be attached to Wagamoon properties.
+            Manage reusable amenities that can be attached to Wagamon properties.
           </Typography>
         </Box>
 

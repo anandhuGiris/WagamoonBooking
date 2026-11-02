@@ -67,15 +67,15 @@ export const GoDaddyPreviewModal: React.FC<GoDaddyPreviewModalProps> = ({ open, 
     }
   };
 
-  const embedScript = `<!-- Wagamoon Booking GoDaddy Custom HTML Block -->
-<div id="wagamoon-properties-container"></div>
+  const embedScript = `<!-- Wagamon Booking GoDaddy Custom HTML Block -->
+<div id="wagamon-properties-container"></div>
 <script>
   (async function() {
     try {
       const response = await fetch('${apiBaseUrl}/public/properties');
       const data = await response.json();
       if (!data.success || !data.data || data.data.length === 0) {
-        document.getElementById('wagamoon-properties-container').innerHTML = '<p style="text-align:center;padding:2rem;">No properties currently available.</p>';
+        document.getElementById('wagamon-properties-container').innerHTML = '<p style="text-align:center;padding:2rem;">No properties currently available.</p>';
         return;
       }
       
@@ -101,9 +101,9 @@ export const GoDaddyPreviewModal: React.FC<GoDaddyPreviewModalProps> = ({ open, 
         \`;
       }).join('');
       
-      document.getElementById('wagamoon-properties-container').innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:24px;">' + cardsHtml + '</div>';
+      document.getElementById('wagamon-properties-container').innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:24px;">' + cardsHtml + '</div>';
     } catch (e) {
-      document.getElementById('wagamoon-properties-container').innerHTML = '<p style="color:red;text-align:center;">Unable to load properties.</p>';
+      document.getElementById('wagamon-properties-container').innerHTML = '<p style="color:red;text-align:center;">Unable to load properties.</p>';
     }
   })();
 </script>`;

@@ -87,7 +87,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
         </Box>
         <Box>
           <Typography variant="h6" sx={{ fontWeight: 800, lineHeight: 1.1, color: '#ffffff' }}>
-            Wagamoon
+            Wagamon
           </Typography>
           <Typography variant="caption" sx={{ color: '#0d9488', fontWeight: 700, letterSpacing: '0.05em' }}>
             BOOKING ADMIN

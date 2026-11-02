@@ -13,7 +13,7 @@ public static class DependencyInjection
     {
         var provider = configuration["DatabaseProvider"] ?? "SqlServer";
         var connectionString = configuration.GetConnectionString("DefaultConnection") 
-            ?? "Server=.\\SQL_SERVER;Database=WagamoonBookingDb;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true";
+            ?? "Server=.\\SQL_SERVER;Database=WagamonBookingDb;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true";
 
         services.AddDbContext<ApplicationDbContext>(options =>
         {

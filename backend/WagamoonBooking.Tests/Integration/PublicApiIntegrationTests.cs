@@ -56,7 +56,7 @@ public class PublicApiIntegrationTests : IClassFixture<WebApplicationFactory<Pro
                 Id = Guid.NewGuid(),
                 Name = "Integration Test Active Villa",
                 Description = "A publicly visible test villa for integration test.",
-                Location = "Wagamoon Hills",
+                Location = "Wagamon Hills",
                 WhatsAppNumber = "+919876543210",
                 Status = PropertyStatus.Active
             };

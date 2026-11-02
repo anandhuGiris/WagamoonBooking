@@ -148,7 +148,7 @@ export const DashboardPage: React.FC = () => {
             Overview Dashboard
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Wagamoon resort listings, publication statuses, and public API metrics.
+            Wagamon resort listings, publication statuses, and public API metrics.
           </Typography>
         </Box>
 
@@ -238,7 +238,7 @@ export const DashboardPage: React.FC = () => {
               Recent Properties
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              Latest properties created or updated in Wagamoon.
+              Latest properties created or updated in Wagamon.
             </Typography>
           </Box>
 

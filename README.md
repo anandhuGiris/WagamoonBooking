@@ -1,6 +1,6 @@
-# Wagamoon Booking — Property Management Admin & Public API
+# Wagamon Booking — Property Management Admin & Public API
 
-A production-ready **Property Management Admin Application** and **Public REST API** built for **Wagamoon Booking**. 
+A production-ready **Property Management Admin Application** and **Public REST API** built for **Wagamon Booking**. 
 
 The system allows administrators to manage boutique properties, photo galleries, facilities, and publication statuses, while exposing an optimized, read-only public REST API that powers the existing **GoDaddy Website Builder** public site with direct **WhatsApp click-to-chat enquiry** links.
 
@@ -172,11 +172,11 @@ During initial startup, the database is automatically seeded with default creden
 
 | Key | Description | Default / Example |
 |---|---|---|
-| `ConnectionStrings__DefaultConnection` | SQL Server connection string | `Server=.\\SQL_SERVER;Database=WagamoonBookingDb;Trusted_Connection=True;TrustServerCertificate=True;` |
+| `ConnectionStrings__DefaultConnection` | SQL Server connection string | `Server=.\\SQL_SERVER;Database=WagamonBookingDb;Trusted_Connection=True;TrustServerCertificate=True;` |
 | `DatabaseProvider` | Database engine (`SqlServer` or `Sqlite`) | `SqlServer` |
 | `Jwt__Key` | Secret key for signing JWT tokens | High-entropy secret key string |
-| `Jwt__Issuer` | Token issuer claim | `WagamoonBookingApi` |
-| `Jwt__Audience` | Token audience claim | `WagamoonBookingAdmin` |
+| `Jwt__Issuer` | Token issuer claim | `WagamonBookingApi` |
+| `Jwt__Audience` | Token audience claim | `WagamonBookingAdmin` |
 | `Cloudinary__CloudName` | Cloudinary Cloud Name | `your-cloud-name` |
 | `Cloudinary__ApiKey` | Cloudinary API Key | `your-api-key` |
 | `Cloudinary__ApiSecret` | Cloudinary API Secret | `your-api-secret` |
@@ -233,12 +233,12 @@ To render live properties on your GoDaddy website:
 3. Paste the following snippet:
 
 ```html
-<!-- Wagamoon Booking GoDaddy Custom HTML Block -->
-<div id="wagamoon-properties-container"></div>
+<!-- Wagamon Booking GoDaddy Custom HTML Block -->
+<div id="wagamon-properties-container"></div>
 <script>
   (async function() {
     const API_URL = 'https://api.yourdomain.com/api/public/properties'; // Replace with your production API URL
-    const container = document.getElementById('wagamoon-properties-container');
+    const container = document.getElementById('wagamon-properties-container');
     try {
       const response = await fetch(API_URL);
       const res = await response.json();
@@ -248,7 +248,7 @@ To render live properties on your GoDaddy website:
       }
       
       const cards = res.data.map(p => {
-        const primaryImg = p.images.find(img => img.isPrimary)?.url || (p.images[0]?.url || 'https://via.placeholder.com/600x400?text=Wagamoon+Property');
+        const primaryImg = p.images.find(img => img.isPrimary)?.url || (p.images[0]?.url || 'https://via.placeholder.com/600x400?text=Wagamon+Property');
         const facilities = p.facilities.map(f => '<span style="display:inline-block;background:#f1f5f9;color:#334155;font-size:12px;padding:3px 8px;border-radius:4px;margin:2px 4px 2px 0;">✓ ' + f + '</span>').join('');
         
         return `

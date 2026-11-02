@@ -125,7 +125,7 @@ export const PropertiesPage: React.FC = () => {
             Property Management
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Manage Wagamoon villas, photos, amenities, WhatsApp direct contact, and live status.
+            Manage Wagamon villas, photos, amenities, WhatsApp direct contact, and live status.
           </Typography>
         </Box>
 
@@ -207,7 +207,7 @@ export const PropertiesPage: React.FC = () => {
           description={
             search || statusFilter !== 'ALL'
               ? 'No properties match your current search criteria. Try resetting filters.'
-              : 'Start by creating your first property listing for Wagamoon Booking.'
+              : 'Start by creating your first property listing for Wagamon Booking.'
           }
           actionText={search || statusFilter !== 'ALL' ? undefined : '+ Add Property'}
           onAction={() => navigate('/properties/new')}

@@ -25,9 +25,9 @@ builder.Services.AddControllers()
     });
 
 // Configure JWT Authentication
-var jwtKey = builder.Configuration["Jwt:Key"] ?? "WagamoonBookingSecretKey_2026_SecureAdminJWTAuthenticationToken#LongEnoughKeyForHmacSha256!";
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "WagamoonBookingApi";
-var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "WagamoonBookingAdmin";
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "WagamonBookingSecretKey_2026_SecureAdminJWTAuthenticationToken#LongEnoughKeyForHmacSha256!";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "WagamonBookingApi";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "WagamonBookingAdmin";
 
 builder.Services.AddAuthentication(options =>
 {
@@ -72,9 +72,9 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Wagamoon Booking API",
+        Title = "Wagamon Booking API",
         Version = "v1",
-        Description = "Property Management Admin & Public API for Wagamoon Booking"
+        Description = "Property Management Admin & Public API for Wagamon Booking"
     });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -113,7 +113,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wagamoon Booking API v1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wagamon Booking API v1");
         c.RoutePrefix = "swagger";
     });
 }

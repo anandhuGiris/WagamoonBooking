@@ -23,7 +23,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   onDrawerToggle,
-  title = 'Wagamoon Booking Admin',
+  title = 'Wagamon Booking Admin',
   onOpenGoDaddyPreview,
 }) => {
   const navigate = useNavigate();

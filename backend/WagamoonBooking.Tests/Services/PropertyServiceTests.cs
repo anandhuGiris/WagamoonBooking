@@ -43,8 +43,8 @@ public class PropertyServiceTests : IDisposable
         var dto = new CreatePropertyDto
         {
             Name = "Mountain View Villa",
-            Description = "A wonderful villa in the hills of Wagamoon with scenic vistas.",
-            Location = "Wagamoon Hills",
+            Description = "A wonderful villa in the hills of Wagamon with scenic vistas.",
+            Location = "Wagamon Hills",
             Bedrooms = 3,
             Bathrooms = 2,
             MaxGuests = 6,
@@ -95,7 +95,7 @@ public class PropertyServiceTests : IDisposable
         {
             Id = Guid.NewGuid(),
             Name = "Active Resort",
-            Description = "A publicly visible resort in Wagamoon.",
+            Description = "A publicly visible resort in Wagamon.",
             Location = "Lake Road",
             WhatsAppNumber = "+919876543210",
             Status = PropertyStatus.Active,
