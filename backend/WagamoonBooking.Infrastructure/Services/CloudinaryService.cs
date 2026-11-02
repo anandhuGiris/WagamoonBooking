@@ -52,7 +52,7 @@ public class CloudinaryService : ICloudinaryService
             var uploadParams = new ImageUploadParams
             {
                 File = new FileDescription(fileName, fileStream),
-                Folder = "wagamoon-properties",
+                Folder = "wagamon-properties",
                 Transformation = new Transformation().Quality("auto").FetchFormat("auto")
             };
 
