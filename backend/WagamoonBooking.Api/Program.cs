@@ -12,6 +12,13 @@ using WagamoonBooking.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Render sets the PORT environment variable dynamically (e.g., 10000)
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(port))
+{
+    builder.WebHost.UseUrls($"http://+:{port}");
+}
+
 // Add Application & Infrastructure services
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -141,8 +148,16 @@ using (var scope = app.Services.CreateScope())
 
     try
     {
-        logger.LogInformation("Applying database migrations...");
-        await context.Database.MigrateAsync();
+        if (context.Database.IsSqlite())
+        {
+            logger.LogInformation("Using SQLite database. Ensuring schema is created...");
+            await context.Database.EnsureCreatedAsync();
+        }
+        else
+        {
+            logger.LogInformation("Applying SQL Server database migrations...");
+            await context.Database.MigrateAsync();
+        }
 
         logger.LogInformation("Seeding database...");
         await DatabaseSeeder.SeedAsync(context, passwordHasher, configuration, logger);
