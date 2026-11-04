@@ -1,7 +1,7 @@
 import React from 'react';
 
 export interface WhatsAppButtonProps {
-  url: string;
+  url?: string;
   label?: string;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
@@ -10,7 +10,7 @@ export interface WhatsAppButtonProps {
 }
 
 export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
-  url,
+  url = 'https://wa.me/919876543210?text=Hi%2C%20I%20would%20like%20to%20enquire%20about%20Wagamon%20Booking.',
   label = 'Enquire on WhatsApp',
   size = 'md',
   className = '',

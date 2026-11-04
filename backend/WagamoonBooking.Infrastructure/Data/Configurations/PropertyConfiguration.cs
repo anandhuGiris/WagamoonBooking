@@ -35,7 +35,13 @@ public class PropertyConfiguration : IEntityTypeConfiguration<Property>
         builder.HasIndex(p => p.Status);
         builder.HasIndex(p => p.Name);
         builder.HasIndex(p => p.Location);
+        builder.HasIndex(p => p.CategoryId);
         builder.HasIndex(p => p.CreatedAt);
+
+        builder.HasOne(p => p.Category)
+            .WithMany(c => c.Properties)
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(p => p.Images)
             .WithOne(img => img.Property)

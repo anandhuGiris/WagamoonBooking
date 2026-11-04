@@ -13,6 +13,10 @@ import { PropertiesPage } from './pages/Properties/PropertiesPage';
 import { AddPropertyPage } from './pages/Properties/AddPropertyPage';
 import { EditPropertyPage } from './pages/Properties/EditPropertyPage';
 import { FacilitiesPage } from './pages/Facilities/FacilitiesPage';
+import { CategoriesPage } from './pages/Categories/CategoriesPage';
+import { ActivitiesPage } from './pages/Activities/ActivitiesPage';
+import { AddActivityPage } from './pages/Activities/AddActivityPage';
+import { EditActivityPage } from './pages/Activities/EditActivityPage';
 
 export const App: React.FC = () => {
   return (
@@ -38,6 +42,10 @@ export const App: React.FC = () => {
               <Route path="properties" element={<PropertiesPage />} />
               <Route path="properties/new" element={<AddPropertyPage />} />
               <Route path="properties/:id/edit" element={<EditPropertyPage />} />
+              <Route path="categories" element={<CategoriesPage />} />
+              <Route path="activities" element={<ActivitiesPage />} />
+              <Route path="activities/new" element={<AddActivityPage />} />
+              <Route path="activities/:id/edit" element={<EditActivityPage />} />
               <Route path="facilities" element={<FacilitiesPage />} />
             </Route>
 

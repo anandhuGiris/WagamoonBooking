@@ -36,12 +36,14 @@ public class PropertyService : IPropertyService
         int pageSize,
         string? search,
         PropertyStatus? status,
+        Guid? categoryId = null,
         CancellationToken ct = default)
     {
         page = Math.Max(1, page);
         pageSize = Math.Clamp(pageSize, 1, 100);
 
         var query = _context.Properties
+            .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.PropertyFacilities)
             .AsNoTracking();
@@ -57,6 +59,11 @@ public class PropertyService : IPropertyService
             query = query.Where(p => p.Status == status.Value);
         }
 
+        if (categoryId.HasValue)
+        {
+            query = query.Where(p => p.CategoryId == categoryId.Value);
+        }
+
         var totalCount = await query.CountAsync(ct);
 
         var properties = await query
@@ -69,6 +76,9 @@ public class PropertyService : IPropertyService
                 Name = p.Name,
                 Description = p.Description,
                 Location = p.Location,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category != null ? p.Category.Name : string.Empty,
+                CategorySlug = p.Category != null ? p.Category.Slug : string.Empty,
                 Bedrooms = p.Bedrooms,
                 Bathrooms = p.Bathrooms,
                 MaxGuests = p.MaxGuests,
@@ -90,6 +100,7 @@ public class PropertyService : IPropertyService
     public async Task<ApiResponse<PropertyDetailDto>> GetPropertyByIdAsync(Guid id, CancellationToken ct = default)
     {
         var property = await _context.Properties
+            .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.PropertyFacilities)
                 .ThenInclude(pf => pf.Facility)
@@ -107,6 +118,9 @@ public class PropertyService : IPropertyService
             Name = property.Name,
             Description = property.Description,
             Location = property.Location,
+            CategoryId = property.CategoryId,
+            CategoryName = property.Category != null ? property.Category.Name : string.Empty,
+            CategorySlug = property.Category != null ? property.Category.Slug : string.Empty,
             Bedrooms = property.Bedrooms,
             Bathrooms = property.Bathrooms,
             MaxGuests = property.MaxGuests,
@@ -155,12 +169,20 @@ public class PropertyService : IPropertyService
             return ApiResponse<PropertyDetailDto>.FailureResult("Validation failed.", errors);
         }
 
+        // Validate that category exists and is active
+        var category = await _context.StayCategories.FirstOrDefaultAsync(c => c.Id == dto.CategoryId, ct);
+        if (category == null || !category.IsActive)
+        {
+            return ApiResponse<PropertyDetailDto>.FailureResult("The selected stay category does not exist or is inactive.");
+        }
+
         var property = new Property
         {
             Id = Guid.NewGuid(),
             Name = dto.Name.Trim(),
             Description = dto.Description.Trim(),
             Location = dto.Location.Trim(),
+            CategoryId = dto.CategoryId,
             Bedrooms = dto.Bedrooms,
             Bathrooms = dto.Bathrooms,
             MaxGuests = dto.MaxGuests,
@@ -201,6 +223,13 @@ public class PropertyService : IPropertyService
             return ApiResponse<PropertyDetailDto>.FailureResult("Validation failed.", errors);
         }
 
+        // Validate that category exists and is active
+        var category = await _context.StayCategories.FirstOrDefaultAsync(c => c.Id == dto.CategoryId, ct);
+        if (category == null || !category.IsActive)
+        {
+            return ApiResponse<PropertyDetailDto>.FailureResult("The selected stay category does not exist or is inactive.");
+        }
+
         var property = await _context.Properties
             .Include(p => p.PropertyFacilities)
             .FirstOrDefaultAsync(p => p.Id == id, ct);
@@ -213,6 +242,7 @@ public class PropertyService : IPropertyService
         property.Name = dto.Name.Trim();
         property.Description = dto.Description.Trim();
         property.Location = dto.Location.Trim();
+        property.CategoryId = dto.CategoryId;
         property.Bedrooms = dto.Bedrooms;
         property.Bathrooms = dto.Bathrooms;
         property.MaxGuests = dto.MaxGuests;
@@ -255,10 +285,10 @@ public class PropertyService : IPropertyService
             return ApiResponse<bool>.FailureResult("Property not found.");
         }
 
-        // Delete associated Cloudinary images
+        // Clean up Cloudinary images if stored
         foreach (var img in property.Images)
         {
-            if (!string.IsNullOrWhiteSpace(img.PublicId))
+            if (!string.IsNullOrEmpty(img.PublicId))
             {
                 try
                 {
@@ -266,7 +296,7 @@ public class PropertyService : IPropertyService
                 }
                 catch
                 {
-                    // Log and continue deletion of database entities
+                    // Ignore image delete failures during property deletion
                 }
             }
         }
@@ -287,6 +317,7 @@ public class PropertyService : IPropertyService
 
         property.Status = status;
         property.UpdatedAt = DateTime.UtcNow;
+
         await _context.SaveChangesAsync(ct);
 
         return ApiResponse<bool>.SuccessResult(true, $"Property status updated to {status}.");
@@ -296,7 +327,7 @@ public class PropertyService : IPropertyService
         Guid propertyId,
         string imageUrl,
         string? publicId,
-        bool isPrimary,
+        bool isPrimary = false,
         CancellationToken ct = default)
     {
         var property = await _context.Properties
@@ -308,20 +339,16 @@ public class PropertyService : IPropertyService
             return ApiResponse<PropertyImageDto>.FailureResult("Property not found.");
         }
 
-        var maxSortOrder = property.Images.Any() ? property.Images.Max(img => img.SortOrder) : 0;
-        var hasPrimary = property.Images.Any(img => img.IsPrimary);
-
-        if (isPrimary && hasPrimary)
+        if (isPrimary || property.Images.Count == 0)
         {
             foreach (var img in property.Images)
             {
                 img.IsPrimary = false;
             }
-        }
-        else if (!hasPrimary)
-        {
             isPrimary = true;
         }
+
+        var maxSortOrder = property.Images.Any() ? property.Images.Max(i => i.SortOrder) + 1 : 0;
 
         var newImage = new PropertyImage
         {
@@ -329,14 +356,12 @@ public class PropertyService : IPropertyService
             PropertyId = propertyId,
             ImageUrl = imageUrl,
             PublicId = publicId,
-            SortOrder = maxSortOrder + 1,
+            SortOrder = maxSortOrder,
             IsPrimary = isPrimary,
             CreatedAt = DateTime.UtcNow
         };
 
         await _context.PropertyImages.AddAsync(newImage, ct);
-        property.UpdatedAt = DateTime.UtcNow;
-
         await _context.SaveChangesAsync(ct);
 
         return ApiResponse<PropertyImageDto>.SuccessResult(new PropertyImageDto
@@ -348,21 +373,12 @@ public class PropertyService : IPropertyService
             SortOrder = newImage.SortOrder,
             IsPrimary = newImage.IsPrimary,
             CreatedAt = newImage.CreatedAt
-        }, "Image uploaded successfully.");
+        }, "Image added successfully.");
     }
 
     public async Task<ApiResponse<bool>> DeleteImageAsync(Guid propertyId, Guid imageId, CancellationToken ct = default)
     {
-        var property = await _context.Properties
-            .Include(p => p.Images)
-            .FirstOrDefaultAsync(p => p.Id == propertyId, ct);
-
-        if (property == null)
-        {
-            return ApiResponse<bool>.FailureResult("Property not found.");
-        }
-
-        var image = property.Images.FirstOrDefault(img => img.Id == imageId);
+        var image = await _context.PropertyImages.FirstOrDefaultAsync(i => i.Id == imageId && i.PropertyId == propertyId, ct);
         if (image == null)
         {
             return ApiResponse<bool>.FailureResult("Image not found.");
@@ -370,95 +386,92 @@ public class PropertyService : IPropertyService
 
         var wasPrimary = image.IsPrimary;
 
-        if (!string.IsNullOrWhiteSpace(image.PublicId))
+        if (!string.IsNullOrEmpty(image.PublicId))
         {
-            try
-            {
-                await _cloudinaryService.DeleteImageAsync(image.PublicId, ct);
-            }
-            catch
-            {
-                // Continue removing DB record
-            }
+            await _cloudinaryService.DeleteImageAsync(image.PublicId, ct);
         }
 
-        property.Images.Remove(image);
-
-        if (wasPrimary && property.Images.Any())
-        {
-            var firstRemaining = property.Images.OrderBy(img => img.SortOrder).First();
-            firstRemaining.IsPrimary = true;
-        }
-
-        property.UpdatedAt = DateTime.UtcNow;
+        _context.PropertyImages.Remove(image);
         await _context.SaveChangesAsync(ct);
+
+        if (wasPrimary)
+        {
+            var nextImage = await _context.PropertyImages
+                .Where(i => i.PropertyId == propertyId)
+                .OrderBy(i => i.SortOrder)
+                .FirstOrDefaultAsync(ct);
+
+            if (nextImage != null)
+            {
+                nextImage.IsPrimary = true;
+                await _context.SaveChangesAsync(ct);
+            }
+        }
 
         return ApiResponse<bool>.SuccessResult(true, "Image deleted successfully.");
     }
 
     public async Task<ApiResponse<bool>> SetPrimaryImageAsync(Guid propertyId, Guid imageId, CancellationToken ct = default)
     {
-        var property = await _context.Properties
-            .Include(p => p.Images)
-            .FirstOrDefaultAsync(p => p.Id == propertyId, ct);
+        var images = await _context.PropertyImages.Where(i => i.PropertyId == propertyId).ToListAsync(ct);
+        var targetImage = images.FirstOrDefault(i => i.Id == imageId);
 
-        if (property == null)
-        {
-            return ApiResponse<bool>.FailureResult("Property not found.");
-        }
-
-        var targetImage = property.Images.FirstOrDefault(img => img.Id == imageId);
         if (targetImage == null)
         {
             return ApiResponse<bool>.FailureResult("Image not found.");
         }
 
-        foreach (var img in property.Images)
+        foreach (var img in images)
         {
             img.IsPrimary = (img.Id == imageId);
         }
 
-        property.UpdatedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync(ct);
-
         return ApiResponse<bool>.SuccessResult(true, "Primary image updated.");
     }
 
     public async Task<ApiResponse<bool>> ReorderImagesAsync(Guid propertyId, List<Guid> imageIds, CancellationToken ct = default)
     {
-        var property = await _context.Properties
-            .Include(p => p.Images)
-            .FirstOrDefaultAsync(p => p.Id == propertyId, ct);
-
-        if (property == null)
-        {
-            return ApiResponse<bool>.FailureResult("Property not found.");
-        }
+        var images = await _context.PropertyImages.Where(i => i.PropertyId == propertyId).ToListAsync(ct);
 
         for (int i = 0; i < imageIds.Count; i++)
         {
-            var img = property.Images.FirstOrDefault(m => m.Id == imageIds[i]);
+            var img = images.FirstOrDefault(x => x.Id == imageIds[i]);
             if (img != null)
             {
-                img.SortOrder = i + 1;
+                img.SortOrder = i;
             }
         }
 
-        property.UpdatedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync(ct);
-
         return ApiResponse<bool>.SuccessResult(true, "Images reordered successfully.");
     }
 
-    public async Task<ApiResponse<List<PublicPropertyDto>>> GetPublicPropertiesAsync(CancellationToken ct = default)
+    public async Task<ApiResponse<List<PublicPropertyDto>>> GetPublicPropertiesAsync(
+        Guid? categoryId = null,
+        string? categorySlug = null,
+        CancellationToken ct = default)
     {
-        // Public API must ONLY expose Active properties!
-        var properties = await _context.Properties
+        var query = _context.Properties
             .Where(p => p.Status == PropertyStatus.Active)
+            .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.PropertyFacilities)
                 .ThenInclude(pf => pf.Facility)
-            .AsNoTracking()
+            .AsNoTracking();
+
+        if (categoryId.HasValue)
+        {
+            query = query.Where(p => p.CategoryId == categoryId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(categorySlug))
+        {
+            var cleanSlug = categorySlug.Trim().ToLower();
+            query = query.Where(p => p.Category != null && p.Category.Slug.ToLower() == cleanSlug);
+        }
+
+        var properties = await query
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync(ct);
 
@@ -468,9 +481,9 @@ public class PropertyService : IPropertyService
 
     public async Task<ApiResponse<PublicPropertyDto>> GetPublicPropertyByIdAsync(Guid id, CancellationToken ct = default)
     {
-        // Public API must ONLY expose Active property!
         var property = await _context.Properties
             .Where(p => p.Status == PropertyStatus.Active && p.Id == id)
+            .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.PropertyFacilities)
                 .ThenInclude(pf => pf.Facility)
@@ -493,6 +506,7 @@ public class PropertyService : IPropertyService
         var inactive = await _context.Properties.CountAsync(p => p.Status == PropertyStatus.Inactive, ct);
 
         var recent = await _context.Properties
+            .Include(p => p.Category)
             .Include(p => p.Images)
             .Include(p => p.PropertyFacilities)
             .OrderByDescending(p => p.CreatedAt)
@@ -503,6 +517,9 @@ public class PropertyService : IPropertyService
                 Name = p.Name,
                 Description = p.Description,
                 Location = p.Location,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category != null ? p.Category.Name : string.Empty,
+                CategorySlug = p.Category != null ? p.Category.Slug : string.Empty,
                 Bedrooms = p.Bedrooms,
                 Bathrooms = p.Bathrooms,
                 MaxGuests = p.MaxGuests,
@@ -541,6 +558,9 @@ public class PropertyService : IPropertyService
             Name = p.Name,
             Description = p.Description,
             Location = p.Location,
+            CategoryId = p.CategoryId,
+            CategoryName = p.Category != null ? p.Category.Name : string.Empty,
+            CategorySlug = p.Category != null ? p.Category.Slug : string.Empty,
             Bedrooms = p.Bedrooms,
             Bathrooms = p.Bathrooms,
             MaxGuests = p.MaxGuests,

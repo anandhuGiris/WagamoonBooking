@@ -9,6 +9,9 @@ export interface PublicPropertyDto {
   name: string;
   description: string;
   location: string;
+  categoryId: string;
+  categoryName: string;
+  categorySlug: string;
   bedrooms: number | null;
   bathrooms: number | null;
   maxGuests: number | null;
@@ -24,4 +27,3 @@ export interface ApiResponse<T> {
   data: T;
   errors?: { field: string; message: string }[] | null;
 }
-

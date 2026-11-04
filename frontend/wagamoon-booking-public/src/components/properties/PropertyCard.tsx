@@ -96,6 +96,28 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, featured =
           <MapPin size={12} color="var(--color-accent-dark)" />
           <span>{property.location || 'Wagamon'}</span>
         </div>
+
+        {/* Category Badge */}
+        {property.categoryName && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '12px',
+              right: '12px',
+              backgroundColor: 'var(--color-primary-dark)',
+              color: '#FFFFFF',
+              fontSize: '0.72rem',
+              fontWeight: 700,
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              padding: '0.35rem 0.75rem',
+              borderRadius: 'var(--radius-full)',
+              boxShadow: 'var(--shadow-sm)',
+            }}
+          >
+            {property.categoryName}
+          </div>
+        )}
       </Link>
 
       {/* Card Body */}

@@ -132,6 +132,7 @@ export const PropertyTable: React.FC<PropertyTableProps> = ({
             <TableRow>
               <TableCell sx={{ width: 100 }}>Image</TableCell>
               <TableCell>Property</TableCell>
+              <TableCell>Category</TableCell>
               <TableCell>Location</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Facilities</TableCell>
@@ -201,6 +202,22 @@ export const PropertyTable: React.FC<PropertyTableProps> = ({
                       {property.bedrooms && property.maxGuests ? ' • ' : ''}
                       {property.maxGuests ? `Max ${property.maxGuests} Guests` : ''}
                     </Typography>
+                  </TableCell>
+
+                  {/* Category */}
+                  <TableCell>
+                    <Chip
+                      label={property.categoryName || 'Standard'}
+                      size="small"
+                      sx={{
+                        backgroundColor: '#f0fdfa',
+                        color: '#0d9488',
+                        fontWeight: 700,
+                        fontSize: '0.75rem',
+                        borderRadius: 1.5,
+                        border: '1px solid #ccfbf1',
+                      }}
+                    />
                   </TableCell>
 
                   {/* Location */}

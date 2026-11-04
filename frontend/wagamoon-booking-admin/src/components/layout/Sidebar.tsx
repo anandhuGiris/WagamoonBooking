@@ -17,6 +17,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import VillaRoundedIcon from '@mui/icons-material/VillaRounded';
 import SpaRoundedIcon from '@mui/icons-material/SpaRounded';
+import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded';
+import ExploreRoundedIcon from '@mui/icons-material/ExploreRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import LandscapeRoundedIcon from '@mui/icons-material/LandscapeRounded';
 import { useAuth } from '../../auth/AuthContext';
@@ -36,6 +38,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
   const menuItems = [
     { text: 'Dashboard', path: '/dashboard', icon: <DashboardRoundedIcon /> },
     { text: 'Properties', path: '/properties', icon: <VillaRoundedIcon /> },
+    { text: 'Stay Categories', path: '/categories', icon: <CategoryRoundedIcon /> },
+    { text: 'Activities', path: '/activities', icon: <ExploreRoundedIcon /> },
     { text: 'Facilities', path: '/facilities', icon: <SpaRoundedIcon /> },
   ];
 
@@ -115,7 +119,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
           {menuItems.map((item) => {
             const isActive =
               location.pathname === item.path ||
-              (item.path === '/properties' && location.pathname.startsWith('/properties'));
+              (item.path !== '/dashboard' && location.pathname.startsWith(item.path));
 
             return (
               <ListItem key={item.text} disablePadding sx={{ mb: 0.75 }}>

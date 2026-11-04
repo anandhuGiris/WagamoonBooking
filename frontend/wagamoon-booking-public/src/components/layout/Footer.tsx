@@ -67,7 +67,12 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <Link to="/properties" style={{ color: 'var(--color-sage-light)', fontSize: '0.92rem' }}>
-                  Villas & Properties
+                  Stays & Properties
+                </Link>
+              </li>
+              <li>
+                <Link to="/activities" style={{ color: 'var(--color-sage-light)', fontSize: '0.92rem' }}>
+                  Adventure Activities
                 </Link>
               </li>
               <li>

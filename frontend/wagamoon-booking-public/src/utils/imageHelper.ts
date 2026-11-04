@@ -33,6 +33,35 @@ export function getFullImageUrl(rawUrl?: string, fallbackIndex = 0): string {
 }
 
 /**
+ * Returns a deterministic fallback image based on an optional name/seed string.
+ */
+export function getPropertyFallbackImage(seed?: string): string {
+  if (!seed) return DEFAULT_FALLBACK_IMAGES[0];
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash << 5) - hash + seed.charCodeAt(i);
+    hash |= 0;
+  }
+  const index = Math.abs(hash) % DEFAULT_FALLBACK_IMAGES.length;
+  return DEFAULT_FALLBACK_IMAGES[index];
+}
+
+/**
+ * Returns the primary image for an activity or fallback.
+ */
+export function getActivityPrimaryImage(activity: { images?: { url: string; isPrimary?: boolean; sortOrder?: number }[]; name?: string }): string {
+  if (!activity.images || activity.images.length === 0) {
+    return getPropertyFallbackImage(activity.name);
+  }
+  const primary = activity.images.find((img) => img.isPrimary);
+  if (primary && primary.url) {
+    return getFullImageUrl(primary.url);
+  }
+  const first = activity.images[0];
+  return getFullImageUrl(first?.url, 0);
+}
+
+/**
  * Returns the primary image for a property, or the first sorted image, or a fallback.
  */
 export function getPropertyPrimaryImage(property: PublicPropertyDto): string {

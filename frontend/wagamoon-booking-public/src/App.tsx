@@ -5,6 +5,8 @@ import { Footer } from './components/layout/Footer';
 import { Home } from './pages/Home';
 import { PropertiesPage } from './pages/PropertiesPage';
 import { PropertyDetailPage } from './pages/PropertyDetailPage';
+import { ActivitiesPage } from './pages/ActivitiesPage';
+import { ActivityDetailPage } from './pages/ActivityDetailPage';
 import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -31,6 +33,8 @@ export const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/properties" element={<PropertiesPage />} />
             <Route path="/properties/:id" element={<PropertyDetailPage />} />
+            <Route path="/activities" element={<ActivitiesPage />} />
+            <Route path="/activities/:id" element={<ActivityDetailPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="*" element={<NotFoundPage />} />
@@ -41,4 +45,3 @@ export const App: React.FC = () => {
     </BrowserRouter>
   );
 };
-

@@ -17,6 +17,7 @@ export interface PropertyQueryParams {
   pageSize?: number;
   search?: string;
   status?: PropertyStatus;
+  categoryId?: string;
 }
 
 export const propertyApi = {
@@ -27,6 +28,7 @@ export const propertyApi = {
         pageSize: params?.pageSize ?? 10,
         search: params?.search || undefined,
         status: params?.status || undefined,
+        categoryId: params?.categoryId || undefined,
       },
     });
     return response.data;

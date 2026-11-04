@@ -1,14 +1,39 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
-import { getPropertyGalleryImages } from '../../utils/imageHelper';
+import { getPropertyGalleryImages, getFullImageUrl, DEFAULT_FALLBACK_IMAGES } from '../../utils/imageHelper';
 import { PublicPropertyDto } from '../../types/property';
 
-interface ImageGalleryProps {
-  property: PublicPropertyDto;
+export interface GalleryImageItem {
+  url: string;
+  isPrimary?: boolean;
+  sortOrder?: number;
 }
 
-export const ImageGallery: React.FC<ImageGalleryProps> = ({ property }) => {
-  const images = getPropertyGalleryImages(property);
+export interface ImageGalleryProps {
+  property?: PublicPropertyDto;
+  images?: GalleryImageItem[];
+  propertyName?: string;
+}
+
+export const ImageGallery: React.FC<ImageGalleryProps> = ({
+  property,
+  images: propImages,
+  propertyName,
+}) => {
+  let images: { url: string; isPrimary: boolean }[] = [];
+  const title = property?.name || propertyName || 'Gallery';
+
+  if (property) {
+    images = getPropertyGalleryImages(property);
+  } else if (propImages && propImages.length > 0) {
+    images = propImages.map((img) => ({
+      url: getFullImageUrl(img.url),
+      isPrimary: !!img.isPrimary,
+    }));
+  } else {
+    images = [{ url: DEFAULT_FALLBACK_IMAGES[0], isPrimary: true }];
+  }
+
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
@@ -52,7 +77,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ property }) => {
       >
         <img
           src={images[selectedIndex]?.url}
-          alt={`${property.name} - View ${selectedIndex + 1}`}
+          alt={`${title} - View ${selectedIndex + 1}`}
           style={{
             width: '100%',
             height: '100%',
@@ -240,7 +265,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ property }) => {
           >
             <img
               src={images[selectedIndex]?.url}
-              alt={`${property.name} - Fullscreen ${selectedIndex + 1}`}
+              alt={`${title} - Fullscreen ${selectedIndex + 1}`}
               style={{
                 maxWidth: '100%',
                 maxHeight: '80vh',
@@ -306,7 +331,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ property }) => {
               fontWeight: 500,
             }}
           >
-            {property.name} — Photo {selectedIndex + 1} of {images.length}
+            {title} — Photo {selectedIndex + 1} of {images.length}
           </div>
         </div>
       )}

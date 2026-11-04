@@ -16,6 +16,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<PropertyImage> PropertyImages => Set<PropertyImage>();
     public DbSet<Facility> Facilities => Set<Facility>();
     public DbSet<PropertyFacility> PropertyFacilities => Set<PropertyFacility>();
+    public DbSet<StayCategory> StayCategories => Set<StayCategory>();
+    public DbSet<Activity> Activities => Set<Activity>();
+    public DbSet<ActivityImage> ActivityImages => Set<ActivityImage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

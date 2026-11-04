@@ -73,6 +73,7 @@ export const EditPropertyPage: React.FC = () => {
     try {
       const response = await propertyApi.updateProperty(id, {
         name: data.name,
+        categoryId: data.categoryId,
         description: data.description,
         location: data.location,
         bedrooms: data.bedrooms ?? null,
@@ -199,6 +200,7 @@ export const EditPropertyPage: React.FC = () => {
           title=""
           initialValues={{
             name: property.name,
+            categoryId: property.categoryId,
             description: property.description,
             location: property.location,
             bedrooms: property.bedrooms ?? undefined,

@@ -5,8 +5,10 @@ export const propertyApi = {
   /**
    * Fetches all active properties from GET /api/public/properties
    */
-  async getProperties(): Promise<PublicPropertyDto[]> {
-    const response = await apiClient.get<ApiResponse<PublicPropertyDto[]>>('/public/properties');
+  async getProperties(params?: { categoryId?: string; categorySlug?: string }): Promise<PublicPropertyDto[]> {
+    const response = await apiClient.get<ApiResponse<PublicPropertyDto[]>>('/public/properties', {
+      params,
+    });
     if (response.data && response.data.success && Array.isArray(response.data.data)) {
       return response.data.data;
     }
@@ -24,4 +26,3 @@ export const propertyApi = {
     throw new Error(response.data?.message || 'Property not found.');
   },
 };
-

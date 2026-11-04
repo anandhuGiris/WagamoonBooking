@@ -24,9 +24,12 @@ public class PublicPropertiesController : ControllerBase
     /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(ApiResponse<List<PublicPropertyDto>>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetActiveProperties(CancellationToken ct)
+    public async Task<IActionResult> GetActiveProperties(
+        [FromQuery] Guid? categoryId = null,
+        [FromQuery] string? categorySlug = null,
+        CancellationToken ct = default)
     {
-        var result = await _propertyService.GetPublicPropertiesAsync(ct);
+        var result = await _propertyService.GetPublicPropertiesAsync(categoryId, categorySlug, ct);
         return Ok(result);
     }
 
