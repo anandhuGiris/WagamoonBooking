@@ -58,12 +58,6 @@ export const LoginPage: React.FC = () => {
       setIsSubmitting(false);
     }
   };
-
-  const handleFillDemo = () => {
-    setValue('email', 'admin@example.com');
-    setValue('password', 'Admin@12345');
-  };
-
   return (
     <Box
       sx={{
@@ -169,30 +163,6 @@ export const LoginPage: React.FC = () => {
               }}
             >
               {isSubmitting ? 'Authenticating...' : 'Login to Admin'}
-            </Button>
-
-            <Divider sx={{ my: 2 }}>
-              <Typography variant="caption" color="text.secondary">
-                QUICK ACCESS
-              </Typography>
-            </Divider>
-
-            <Button
-              variant="outlined"
-              fullWidth
-              size="small"
-              startIcon={<KeyIcon />}
-              onClick={handleFillDemo}
-              sx={{
-                color: '#64748b',
-                borderColor: '#cbd5e1',
-                '&:hover': {
-                  borderColor: '#94a3b8',
-                  backgroundColor: '#f8fafc',
-                },
-              }}
-            >
-              Fill Demo Credentials (admin@example.com)
             </Button>
           </Box>
         </CardContent>
