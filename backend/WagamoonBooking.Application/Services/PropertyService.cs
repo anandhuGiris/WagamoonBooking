@@ -18,17 +18,22 @@ public class PropertyService : IPropertyService
     private readonly ICloudinaryService _cloudinaryService;
     private readonly IValidator<CreatePropertyDto> _createValidator;
     private readonly IValidator<UpdatePropertyDto> _updateValidator;
+    private readonly string _publicWebsiteBaseUrl;
 
     public PropertyService(
         IApplicationDbContext context,
         ICloudinaryService cloudinaryService,
         IValidator<CreatePropertyDto> createValidator,
-        IValidator<UpdatePropertyDto> updateValidator)
+        IValidator<UpdatePropertyDto> updateValidator,
+        string? publicWebsiteBaseUrl = null)
     {
         _context = context;
         _cloudinaryService = cloudinaryService;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _publicWebsiteBaseUrl = (publicWebsiteBaseUrl
+            ?? Environment.GetEnvironmentVariable("PUBLIC_WEBSITE_BASE_URL")
+            ?? "https://wagamoonbooking.com").TrimEnd('/');
     }
 
     public async Task<ApiResponse<PagedResult<PropertyDto>>> GetPropertiesAsync(
@@ -546,11 +551,9 @@ public class PropertyService : IPropertyService
         return ApiResponse<DashboardStatsDto>.SuccessResult(stats);
     }
 
-    private static PublicPropertyDto MapToPublicDto(Property p)
+    private PublicPropertyDto MapToPublicDto(Property p)
     {
-        var cleanNumber = Regex.Replace(p.WhatsAppNumber, @"[^\d]", "");
-        var message = Uri.EscapeDataString($"Hi, I'm interested in {p.Name}.");
-        var whatsappUrl = $"https://wa.me/{cleanNumber}?text={message}";
+        var whatsappUrl = BuildWhatsAppUrl(p);
 
         return new PublicPropertyDto
         {
@@ -582,5 +585,20 @@ public class PropertyService : IPropertyService
                 .OrderBy(f => f)
                 .ToList()
         };
+    }
+
+    private string BuildWhatsAppUrl(Property p)
+    {
+        if (string.IsNullOrWhiteSpace(p.WhatsAppNumber))
+            return string.Empty;
+
+        var cleanNumber = Regex.Replace(p.WhatsAppNumber, @"[^\d]", "");
+        if (string.IsNullOrWhiteSpace(cleanNumber))
+            return string.Empty;
+
+        var productUrl = $"{_publicWebsiteBaseUrl}/properties/{p.Id}";
+        var message = $"Hello, I'm interested in booking {p.Name} in Wagamon.\n\nProperty Details: {productUrl}\n\nPlease share availability and rates.";
+
+        return $"https://wa.me/{cleanNumber}?text={Uri.EscapeDataString(message)}";
     }
 }

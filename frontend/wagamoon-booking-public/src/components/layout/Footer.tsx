@@ -101,7 +101,7 @@ export const Footer: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <MessageCircle size={18} color="#25D366" style={{ flexShrink: 0 }} />
                 <a
-                  href="https://wa.me/919876543210?text=Hi%2C%20I%20would%20like%20to%20enquire%20about%20villa%20availability%20in%20Wagamon."
+                  href="https://wa.me/917034749777?text=Hi%2C%20I%20would%20like%20to%20enquire%20about%20villa%20availability%20in%20Wagamon."
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ color: '#25D366', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}

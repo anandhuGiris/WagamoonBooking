@@ -31,7 +31,7 @@ import { categoryApi } from '../../api/categoryApi';
 import { StayCategory } from '../../types/Category';
 
 interface PropertyFormProps {
-  initialValues?: Partial<PropertyFormData>;
+  initialValues?: Partial<PropertyFormData> & { id?: string };
   onSubmit: (data: PropertyFormData) => Promise<void>;
   isSubmitting?: boolean;
   submitButtonText?: string;
@@ -89,7 +89,7 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({
 
   const watchedPhone = watch('whatsAppNumber');
   const watchedName = watch('name');
-  const previewWhatsAppUrl = buildWhatsAppUrl(watchedPhone, watchedName);
+  const previewWhatsAppUrl = buildWhatsAppUrl(watchedPhone, watchedName, initialValues?.id);
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>

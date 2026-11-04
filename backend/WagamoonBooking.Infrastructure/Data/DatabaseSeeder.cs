@@ -9,6 +9,127 @@ namespace WagamoonBooking.Infrastructure.Data;
 
 public static class DatabaseSeeder
 {
+    public static async Task ApplySchemaMigrationsAsync(ApplicationDbContext context, ILogger logger)
+    {
+        try
+        {
+            logger.LogInformation("Applying automatic idempotent schema migrations...");
+
+            // 1. Create StayCategories table
+            await context.Database.ExecuteSqlRawAsync(@"
+                CREATE TABLE IF NOT EXISTS ""StayCategories"" (
+                    ""Id"" uuid NOT NULL,
+                    ""Name"" character varying(100) NOT NULL,
+                    ""Slug"" character varying(120) NOT NULL,
+                    ""Description"" character varying(500) NULL,
+                    ""IsActive"" boolean NOT NULL DEFAULT TRUE,
+                    ""DisplayOrder"" integer NOT NULL DEFAULT 0,
+                    ""CreatedAt"" timestamp with time zone NOT NULL DEFAULT NOW(),
+                    ""UpdatedAt"" timestamp with time zone NULL,
+                    CONSTRAINT ""PK_StayCategories"" PRIMARY KEY (""Id"")
+                );
+
+                CREATE UNIQUE INDEX IF NOT EXISTS ""IX_StayCategories_Name"" ON ""StayCategories"" (""Name"");
+                CREATE UNIQUE INDEX IF NOT EXISTS ""IX_StayCategories_Slug"" ON ""StayCategories"" (""Slug"");
+                CREATE INDEX IF NOT EXISTS ""IX_StayCategories_IsActive"" ON ""StayCategories"" (""IsActive"");
+                CREATE INDEX IF NOT EXISTS ""IX_StayCategories_DisplayOrder"" ON ""StayCategories"" (""DisplayOrder"");
+            ");
+
+            // 2. Ensure default Villa category exists
+            await context.Database.ExecuteSqlRawAsync(@"
+                INSERT INTO ""StayCategories"" (""Id"", ""Name"", ""Slug"", ""Description"", ""IsActive"", ""DisplayOrder"", ""CreatedAt"")
+                VALUES ('11111111-1111-1111-1111-111111111111', 'Villa', 'villa', 'Exclusive private villas offering scenic hillside seclusion and luxury amenities.', TRUE, 1, NOW())
+                ON CONFLICT (""Slug"") DO NOTHING;
+            ");
+
+            // 3. Safely add CategoryId column to Properties if missing and populate it
+            await context.Database.ExecuteSqlRawAsync(@"
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns 
+                        WHERE table_name = 'Properties' AND column_name = 'CategoryId'
+                    ) THEN
+                        ALTER TABLE ""Properties"" ADD COLUMN ""CategoryId"" uuid NULL;
+                    END IF;
+                END $$;
+
+                UPDATE ""Properties"" 
+                SET ""CategoryId"" = '11111111-1111-1111-1111-111111111111' 
+                WHERE ""CategoryId"" IS NULL OR ""CategoryId"" = '00000000-0000-0000-0000-000000000000';
+
+                DO $$
+                BEGIN
+                    IF EXISTS (
+                        SELECT 1 FROM information_schema.columns 
+                        WHERE table_name = 'Properties' AND column_name = 'CategoryId' AND is_nullable = 'YES'
+                    ) THEN
+                        ALTER TABLE ""Properties"" ALTER COLUMN ""CategoryId"" SET NOT NULL;
+                    END IF;
+                END $$;
+
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.table_constraints 
+                        WHERE constraint_name = 'FK_Properties_StayCategories_CategoryId'
+                    ) THEN
+                        ALTER TABLE ""Properties"" 
+                        ADD CONSTRAINT ""FK_Properties_StayCategories_CategoryId"" 
+                        FOREIGN KEY (""CategoryId"") REFERENCES ""StayCategories"" (""Id"") ON DELETE RESTRICT;
+                    END IF;
+                END $$;
+
+                CREATE INDEX IF NOT EXISTS ""IX_Properties_CategoryId"" ON ""Properties"" (""CategoryId"");
+            ");
+
+            // 4. Create Activities and ActivityImages tables
+            await context.Database.ExecuteSqlRawAsync(@"
+                CREATE TABLE IF NOT EXISTS ""Activities"" (
+                    ""Id"" uuid NOT NULL,
+                    ""Name"" character varying(200) NOT NULL,
+                    ""Slug"" character varying(220) NOT NULL,
+                    ""Description"" text NOT NULL,
+                    ""Location"" character varying(200) NOT NULL,
+                    ""Duration"" character varying(100) NULL,
+                    ""Price"" numeric(18,2) NULL,
+                    ""WhatsAppNumber"" character varying(30) NULL,
+                    ""IsActive"" boolean NOT NULL DEFAULT TRUE,
+                    ""DisplayOrder"" integer NOT NULL DEFAULT 0,
+                    ""CreatedAt"" timestamp with time zone NOT NULL DEFAULT NOW(),
+                    ""UpdatedAt"" timestamp with time zone NULL,
+                    CONSTRAINT ""PK_Activities"" PRIMARY KEY (""Id"")
+                );
+
+                CREATE INDEX IF NOT EXISTS ""IX_Activities_Name"" ON ""Activities"" (""Name"");
+                CREATE UNIQUE INDEX IF NOT EXISTS ""IX_Activities_Slug"" ON ""Activities"" (""Slug"");
+                CREATE INDEX IF NOT EXISTS ""IX_Activities_IsActive"" ON ""Activities"" (""IsActive"");
+                CREATE INDEX IF NOT EXISTS ""IX_Activities_DisplayOrder"" ON ""Activities"" (""DisplayOrder"");
+                CREATE INDEX IF NOT EXISTS ""IX_Activities_CreatedAt"" ON ""Activities"" (""CreatedAt"");
+
+                CREATE TABLE IF NOT EXISTS ""ActivityImages"" (
+                    ""Id"" uuid NOT NULL,
+                    ""ActivityId"" uuid NOT NULL,
+                    ""ImageUrl"" character varying(1000) NOT NULL,
+                    ""PublicId"" character varying(250) NULL,
+                    ""SortOrder"" integer NOT NULL,
+                    ""IsPrimary"" boolean NOT NULL,
+                    ""CreatedAt"" timestamp with time zone NOT NULL DEFAULT NOW(),
+                    CONSTRAINT ""PK_ActivityImages"" PRIMARY KEY (""Id""),
+                    CONSTRAINT ""FK_ActivityImages_Activities_ActivityId"" FOREIGN KEY (""ActivityId"") REFERENCES ""Activities"" (""Id"") ON DELETE CASCADE
+                );
+
+                CREATE INDEX IF NOT EXISTS ""IX_ActivityImages_ActivityId"" ON ""ActivityImages"" (""ActivityId"");
+            ");
+
+            logger.LogInformation("Automatic schema migrations applied successfully.");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to apply automatic database schema migrations.");
+        }
+    }
+
     public static async Task SeedAsync(
         ApplicationDbContext context,
         IPasswordHasher passwordHasher,

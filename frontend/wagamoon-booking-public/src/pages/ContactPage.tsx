@@ -22,7 +22,7 @@ export const ContactPage: React.FC = () => {
   // Generates custom WhatsApp message from input fields
   const getCustomWhatsAppUrl = () => {
     const text = `Hi Wagamon Booking! My name is ${inquiryName || 'a guest'}. I am planning to visit Wagamon around ${inquiryDates || 'upcoming dates'} for ${inquiryGuests} guests. ${inquiryMessage ? 'Note: ' + inquiryMessage : ''}`;
-    return `https://wa.me/919876543210?text=${encodeURIComponent(text)}`;
+    return `https://wa.me/917034749777?text=${encodeURIComponent(text)}`;
   };
 
   return (
@@ -91,7 +91,7 @@ export const ContactPage: React.FC = () => {
                       </div>
                     </div>
                     <a
-                      href="https://wa.me/919876543210?text=Hi%2C%20I%20would%20like%20to%20enquire%20about%20villa%20availability%20in%20Wagamon."
+                      href="https://wa.me/917034749777?text=Hi%2C%20I%20would%20like%20to%20enquire%20about%20villa%20availability%20in%20Wagamon."
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-whatsapp btn-sm"
@@ -131,10 +131,10 @@ export const ContactPage: React.FC = () => {
                         Call Us Directly
                       </div>
                       <a
-                        href="tel:+919876543210"
+                        href="tel:+917034749777"
                         style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-primary-dark)', textDecoration: 'none' }}
                       >
-                        +91 98765 43210
+                        +91 70347 49777
                       </a>
                     </div>
                   </div>

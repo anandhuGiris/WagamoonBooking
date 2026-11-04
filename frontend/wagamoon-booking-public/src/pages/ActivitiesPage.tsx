@@ -271,7 +271,7 @@ export const ActivitiesPage: React.FC = () => {
                           <WhatsAppButton
                             url={
                               act.whatsAppUrl ||
-                              `https://wa.me/919876543210?text=${encodeURIComponent(
+                              `https://wa.me/917034749777?text=${encodeURIComponent(
                                 `Hi, I'm interested in booking the ${act.name} activity in Wagamon.`
                               )}`
                             }

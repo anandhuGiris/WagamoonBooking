@@ -113,7 +113,7 @@ export const Navbar: React.FC = () => {
         {/* Action Header Button */}
         <div style={{ display: 'none', alignItems: 'center', gap: '1rem' }} className="desktop-actions">
           <WhatsAppButton
-            url="https://wa.me/919876543210?text=Hi%2C%20I%20would%20like%20to%20enquire%20about%20villa%20availability%20in%20Wagamon."
+            url="https://wa.me/917034749777?text=Hi%2C%20I%20would%20like%20to%20enquire%20about%20villa%20availability%20in%20Wagamon."
             label="Direct Enquiry"
             size="sm"
           />
@@ -170,7 +170,7 @@ export const Navbar: React.FC = () => {
           ))}
           <div style={{ paddingTop: '0.75rem' }}>
             <WhatsAppButton
-              url="https://wa.me/919876543210?text=Hi%2C%20I%20would%20like%20to%20enquire%20about%20villa%20availability%20in%20Wagamon."
+              url="https://wa.me/917034749777?text=Hi%2C%20I%20would%20like%20to%20enquire%20about%20villa%20availability%20in%20Wagamon."
               label="Contact on WhatsApp"
               fullWidth
             />

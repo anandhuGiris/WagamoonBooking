@@ -151,6 +151,11 @@ using (var scope = app.Services.CreateScope())
         logger.LogInformation("Ensuring database schema exists ({Provider})...", context.Database.ProviderName);
         await context.Database.EnsureCreatedAsync();
 
+        if (context.Database.IsNpgsql() || context.Database.ProviderName?.Contains("Npgsql", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            await DatabaseSeeder.ApplySchemaMigrationsAsync(context, logger);
+        }
+
         logger.LogInformation("Seeding database...");
         await DatabaseSeeder.SeedAsync(context, passwordHasher, configuration, logger);
         logger.LogInformation("Database initialization completed successfully.");

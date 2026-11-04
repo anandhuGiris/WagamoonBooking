@@ -62,7 +62,7 @@ export const ActivityDetailPage: React.FC = () => {
         title: activity?.name,
         text: `Check out ${activity?.name} in Wagamon`,
         url: window.location.href,
-      }).catch(() => {});
+      }).catch(() => { });
     } else {
       navigator.clipboard.writeText(window.location.href);
       setCopiedLink(true);
@@ -120,7 +120,7 @@ export const ActivityDetailPage: React.FC = () => {
   const bookingMessage = `Hi, I'm interested in booking the ${activity.name} activity in Wagamon. Could you please share available slots and group details?`;
   const bookingUrl =
     activity.whatsAppUrl ||
-    `https://wa.me/919876543210?text=${encodeURIComponent(bookingMessage)}`;
+    `https://wa.me/917034749777?text=${encodeURIComponent(bookingMessage)}`;
 
   return (
     <div style={{ backgroundColor: 'var(--color-bg)' }}>

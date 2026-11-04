@@ -199,6 +199,7 @@ export const EditPropertyPage: React.FC = () => {
         <PropertyForm
           title=""
           initialValues={{
+            id: property.id,
             name: property.name,
             categoryId: property.categoryId,
             description: property.description,

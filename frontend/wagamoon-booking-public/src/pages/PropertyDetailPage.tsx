@@ -67,7 +67,7 @@ export const PropertyDetailPage: React.FC = () => {
         title: property?.name,
         text: `Check out ${property?.name} in Wagamon`,
         url: window.location.href,
-      }).catch(() => {});
+      }).catch(() => { });
     } else {
       navigator.clipboard.writeText(window.location.href);
       setCopiedLink(true);
@@ -110,7 +110,7 @@ export const PropertyDetailPage: React.FC = () => {
               <span>Back to Properties</span>
             </Link>
             <WhatsAppButton
-              url="https://wa.me/919876543210?text=Hi%2C%20I%20am%20inquiring%20about%20villa%20availability%20in%20Wagamon."
+              url="https://wa.me/917034749777?text=Hi%2C%20I%20am%20inquiring%20about%20villa%20availability%20in%20Wagamon."
               label="Contact Host"
             />
           </div>
