@@ -21,6 +21,7 @@ import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded';
 import ExploreRoundedIcon from '@mui/icons-material/ExploreRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import LandscapeRoundedIcon from '@mui/icons-material/LandscapeRounded';
+import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded';
 import { useAuth } from '../../auth/AuthContext';
 
 export const DRAWER_WIDTH = 260;
@@ -41,6 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onClose }) => {
     { text: 'Stay Categories', path: '/categories', icon: <CategoryRoundedIcon /> },
     { text: 'Activities', path: '/activities', icon: <ExploreRoundedIcon /> },
     { text: 'Facilities', path: '/facilities', icon: <SpaRoundedIcon /> },
+    { text: 'Admins', path: '/admins', icon: <AdminPanelSettingsRoundedIcon /> },
   ];
 
   const handleNav = (path: string) => {

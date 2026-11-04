@@ -17,6 +17,8 @@ import { CategoriesPage } from './pages/Categories/CategoriesPage';
 import { ActivitiesPage } from './pages/Activities/ActivitiesPage';
 import { AddActivityPage } from './pages/Activities/AddActivityPage';
 import { EditActivityPage } from './pages/Activities/EditActivityPage';
+import { AdminsPage } from './pages/Admins/AdminsPage';
+import { AddAdminPage } from './pages/Admins/AddAdminPage';
 
 export const App: React.FC = () => {
   return (
@@ -47,6 +49,8 @@ export const App: React.FC = () => {
               <Route path="activities/new" element={<AddActivityPage />} />
               <Route path="activities/:id/edit" element={<EditActivityPage />} />
               <Route path="facilities" element={<FacilitiesPage />} />
+              <Route path="admins" element={<AdminsPage />} />
+              <Route path="admins/new" element={<AddAdminPage />} />
             </Route>
 
             {/* Catch-all */}

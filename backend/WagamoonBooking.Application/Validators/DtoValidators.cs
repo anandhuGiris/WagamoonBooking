@@ -4,6 +4,7 @@ using WagamoonBooking.Application.DTOs.Auth;
 using WagamoonBooking.Application.DTOs.Facilities;
 using WagamoonBooking.Application.DTOs.Properties;
 using WagamoonBooking.Application.DTOs.StayCategories;
+using WagamoonBooking.Application.DTOs.Users;
 
 namespace WagamoonBooking.Application.Validators;
 
@@ -211,5 +212,47 @@ public class UpdateActivityDtoValidator : AbstractValidator<UpdateActivityDto>
         RuleFor(x => x.Slug)
             .Matches(@"^[a-z0-9]+(?:-[a-z0-9]+)*$").When(x => !string.IsNullOrWhiteSpace(x.Slug))
             .WithMessage("Slug may only contain lowercase letters, numbers, and hyphens.");
+    }
+}
+
+
+public class CreateAdminDtoValidator : AbstractValidator<CreateAdminDto>
+{
+    public CreateAdminDtoValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("Full Name is required.")
+            .MaximumLength(150).WithMessage("Name cannot exceed 150 characters.");
+
+        RuleFor(x => x.Email)
+            .NotEmpty().WithMessage("Email address is required.")
+            .EmailAddress().WithMessage("A valid email address is required.")
+            .MaximumLength(256).WithMessage("Email cannot exceed 256 characters.");
+
+        RuleFor(x => x.Password)
+            .NotEmpty().WithMessage("Password is required.")
+            .MinimumLength(6).WithMessage("Password must be at least 6 characters long.")
+            .MaximumLength(100).WithMessage("Password cannot exceed 100 characters.");
+    }
+}
+
+public class UpdateAdminDtoValidator : AbstractValidator<UpdateAdminDto>
+{
+    public UpdateAdminDtoValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("Full Name is required.")
+            .MaximumLength(150).WithMessage("Name cannot exceed 150 characters.");
+
+        RuleFor(x => x.Email)
+            .NotEmpty().WithMessage("Email address is required.")
+            .EmailAddress().WithMessage("A valid email address is required.")
+            .MaximumLength(256).WithMessage("Email cannot exceed 256 characters.");
+
+        RuleFor(x => x.Password)
+            .MinimumLength(6).When(x => !string.IsNullOrWhiteSpace(x.Password))
+            .WithMessage("Password must be at least 6 characters long.")
+            .MaximumLength(100).When(x => !string.IsNullOrWhiteSpace(x.Password))
+            .WithMessage("Password cannot exceed 100 characters.");
     }
 }
