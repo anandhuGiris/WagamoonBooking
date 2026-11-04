@@ -1,0 +1,11 @@
+# Root Netlify configuration for Wagamon Booking Public Website
+[build]
+  base = "frontend/wagamoon-booking-public"
+  publish = "dist"
+  command = "npm run build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+

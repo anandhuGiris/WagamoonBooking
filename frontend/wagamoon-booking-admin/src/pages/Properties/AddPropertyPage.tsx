@@ -17,6 +17,7 @@ export const AddPropertyPage: React.FC = () => {
     try {
       const response = await propertyApi.createProperty({
         name: data.name,
+        categoryId: data.categoryId,
         description: data.description,
         location: data.location,
         bedrooms: data.bedrooms ?? null,

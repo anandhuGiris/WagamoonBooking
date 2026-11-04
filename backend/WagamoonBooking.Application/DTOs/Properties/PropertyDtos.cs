@@ -10,6 +10,9 @@ public class PropertyDto
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Location { get; set; } = string.Empty;
+    public Guid CategoryId { get; set; }
+    public string CategoryName { get; set; } = string.Empty;
+    public string CategorySlug { get; set; } = string.Empty;
     public int? Bedrooms { get; set; }
     public int? Bathrooms { get; set; }
     public int? MaxGuests { get; set; }
@@ -28,6 +31,9 @@ public class PropertyDetailDto
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Location { get; set; } = string.Empty;
+    public Guid CategoryId { get; set; }
+    public string CategoryName { get; set; } = string.Empty;
+    public string CategorySlug { get; set; } = string.Empty;
     public int? Bedrooms { get; set; }
     public int? Bathrooms { get; set; }
     public int? MaxGuests { get; set; }
@@ -46,6 +52,7 @@ public class CreatePropertyDto
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Location { get; set; } = string.Empty;
+    public Guid CategoryId { get; set; }
     public int? Bedrooms { get; set; }
     public int? Bathrooms { get; set; }
     public int? MaxGuests { get; set; }
@@ -59,6 +66,7 @@ public class UpdatePropertyDto
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Location { get; set; } = string.Empty;
+    public Guid CategoryId { get; set; }
     public int? Bedrooms { get; set; }
     public int? Bathrooms { get; set; }
     public int? MaxGuests { get; set; }
@@ -78,6 +86,9 @@ public class PublicPropertyDto
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Location { get; set; } = string.Empty;
+    public Guid CategoryId { get; set; }
+    public string CategoryName { get; set; } = string.Empty;
+    public string CategorySlug { get; set; } = string.Empty;
     public int? Bedrooms { get; set; }
     public int? Bathrooms { get; set; }
     public int? MaxGuests { get; set; }

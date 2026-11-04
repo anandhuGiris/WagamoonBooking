@@ -10,6 +10,9 @@ public interface IApplicationDbContext
     DbSet<PropertyImage> PropertyImages { get; }
     DbSet<Facility> Facilities { get; }
     DbSet<PropertyFacility> PropertyFacilities { get; }
+    DbSet<StayCategory> StayCategories { get; }
+    DbSet<Activity> Activities { get; }
+    DbSet<ActivityImage> ActivityImages { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

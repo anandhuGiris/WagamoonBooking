@@ -30,6 +30,9 @@ export interface Property {
   name: string;
   description: string;
   location: string;
+  categoryId: string;
+  categoryName?: string;
+  categorySlug?: string;
   bedrooms?: number | null;
   bathrooms?: number | null;
   maxGuests?: number | null;
@@ -47,6 +50,9 @@ export interface PropertyDetail {
   name: string;
   description: string;
   location: string;
+  categoryId: string;
+  categoryName?: string;
+  categorySlug?: string;
   bedrooms?: number | null;
   bathrooms?: number | null;
   maxGuests?: number | null;
@@ -63,6 +69,7 @@ export interface CreatePropertyRequest {
   name: string;
   description: string;
   location: string;
+  categoryId: string;
   bedrooms?: number | null;
   bathrooms?: number | null;
   maxGuests?: number | null;
@@ -75,6 +82,7 @@ export interface UpdatePropertyRequest {
   name: string;
   description: string;
   location: string;
+  categoryId: string;
   bedrooms?: number | null;
   bathrooms?: number | null;
   maxGuests?: number | null;
@@ -94,6 +102,9 @@ export interface PublicProperty {
   name: string;
   description: string;
   location: string;
+  categoryId: string;
+  categoryName?: string;
+  categorySlug?: string;
   bedrooms?: number | null;
   bathrooms?: number | null;
   maxGuests?: number | null;

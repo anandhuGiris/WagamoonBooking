@@ -17,7 +17,20 @@ public static class DependencyInjection
 
         services.AddDbContext<ApplicationDbContext>(options =>
         {
-            if (provider.Equals("Sqlite", StringComparison.OrdinalIgnoreCase))
+            if (provider.Equals("PostgreSql", StringComparison.OrdinalIgnoreCase) ||
+                provider.Equals("Postgres", StringComparison.OrdinalIgnoreCase) ||
+                provider.Equals("Npgsql", StringComparison.OrdinalIgnoreCase))
+            {
+                var npgsqlConnStr = FormatPostgreSqlConnectionString(connectionString);
+                options.UseNpgsql(npgsqlConnStr, npgsqlOptions =>
+                {
+                    npgsqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 3,
+                        maxRetryDelay: TimeSpan.FromSeconds(5),
+                        errorCodesToAdd: null);
+                });
+            }
+            else if (provider.Equals("Sqlite", StringComparison.OrdinalIgnoreCase))
             {
                 options.UseSqlite(connectionString);
             }
@@ -39,5 +52,27 @@ public static class DependencyInjection
         services.AddScoped<ICloudinaryService, CloudinaryService>();
 
         return services;
+    }
+
+    private static string FormatPostgreSqlConnectionString(string raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw)) return raw;
+
+        if (raw.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
+            raw.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+        {
+            var uri = new Uri(raw);
+            var userInfo = uri.UserInfo.Split(':', 2);
+            var username = userInfo.Length > 0 ? Uri.UnescapeDataString(userInfo[0]) : "";
+            var password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : "";
+            var host = uri.Host;
+            var port = uri.Port > 0 ? uri.Port : 5432;
+            var database = uri.AbsolutePath.TrimStart('/');
+            if (string.IsNullOrEmpty(database)) database = "neondb";
+
+            return $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true;";
+        }
+
+        return raw;
     }
 }

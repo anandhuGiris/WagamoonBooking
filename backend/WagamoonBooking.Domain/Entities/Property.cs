@@ -13,6 +13,8 @@ public class Property
     public int? MaxGuests { get; set; }
     public string WhatsAppNumber { get; set; } = string.Empty;
     public PropertyStatus Status { get; set; } = PropertyStatus.Draft;
+    public Guid CategoryId { get; set; }
+    public StayCategory? Category { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
 

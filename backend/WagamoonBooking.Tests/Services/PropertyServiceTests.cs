@@ -17,6 +17,7 @@ public class PropertyServiceTests : IDisposable
     private readonly IDisposable _connection;
     private readonly Mock<ICloudinaryService> _cloudinaryMock;
     private readonly PropertyService _propertyService;
+    private readonly StayCategory _defaultCategory;
 
     public PropertyServiceTests()
     {
@@ -24,6 +25,19 @@ public class PropertyServiceTests : IDisposable
         _context = context;
         _connection = connection;
         _cloudinaryMock = new Mock<ICloudinaryService>();
+
+        _defaultCategory = new StayCategory
+        {
+            Id = Guid.NewGuid(),
+            Name = "Villa",
+            Slug = "villa",
+            Description = "Luxury private villas",
+            IsActive = true,
+            DisplayOrder = 1,
+            CreatedAt = DateTime.UtcNow
+        };
+        _context.StayCategories.Add(_defaultCategory);
+        _context.SaveChangesAsync().Wait();
 
         _propertyService = new PropertyService(
             _context,
@@ -33,7 +47,7 @@ public class PropertyServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task CreatePropertyAsync_ValidData_CreatesPropertyWithFacilities()
+    public async Task CreatePropertyAsync_ValidData_CreatesPropertyWithFacilitiesAndCategory()
     {
         // Arrange
         var facility = new Facility { Id = Guid.NewGuid(), Name = "WiFi", IsActive = true };
@@ -45,6 +59,7 @@ public class PropertyServiceTests : IDisposable
             Name = "Mountain View Villa",
             Description = "A wonderful villa in the hills of Wagamon with scenic vistas.",
             Location = "Wagamon Hills",
+            CategoryId = _defaultCategory.Id,
             Bedrooms = 3,
             Bathrooms = 2,
             MaxGuests = 6,
@@ -61,8 +76,65 @@ public class PropertyServiceTests : IDisposable
         Assert.NotNull(result.Data);
         Assert.Equal("Mountain View Villa", result.Data.Name);
         Assert.Equal(PropertyStatus.Draft, result.Data.Status);
+        Assert.Equal(_defaultCategory.Id, result.Data.CategoryId);
+        Assert.Equal("Villa", result.Data.CategoryName);
         Assert.Single(result.Data.Facilities);
         Assert.Equal("WiFi", result.Data.Facilities[0].Name);
+    }
+
+    [Fact]
+    public async Task CreatePropertyAsync_MissingCategory_ReturnsValidationError()
+    {
+        // Arrange
+        var dto = new CreatePropertyDto
+        {
+            Name = "No Category Property",
+            Description = "A property without a category specified.",
+            Location = "Wagamon",
+            CategoryId = Guid.Empty,
+            WhatsAppNumber = "+919876543210",
+            Status = PropertyStatus.Draft
+        };
+
+        // Act
+        var result = await _propertyService.CreatePropertyAsync(dto);
+
+        // Assert
+        Assert.False(result.Success);
+        Assert.NotNull(result.Errors);
+        Assert.Contains(result.Errors, e => e.Field.Equals("CategoryId", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public async Task CreatePropertyAsync_InactiveCategory_ReturnsFailure()
+    {
+        // Arrange
+        var inactiveCategory = new StayCategory
+        {
+            Id = Guid.NewGuid(),
+            Name = "Old Category",
+            Slug = "old-category",
+            IsActive = false
+        };
+        await _context.StayCategories.AddAsync(inactiveCategory);
+        await _context.SaveChangesAsync();
+
+        var dto = new CreatePropertyDto
+        {
+            Name = "Inactive Category Test",
+            Description = "Attempting to assign an inactive category.",
+            Location = "Wagamon Hills",
+            CategoryId = inactiveCategory.Id,
+            WhatsAppNumber = "+919876543210",
+            Status = PropertyStatus.Draft
+        };
+
+        // Act
+        var result = await _propertyService.CreatePropertyAsync(dto);
+
+        // Assert
+        Assert.False(result.Success);
+        Assert.Contains("inactive", result.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -74,6 +146,7 @@ public class PropertyServiceTests : IDisposable
             Name = "Invalid Property",
             Description = "Short description with sufficient length for valid input test.",
             Location = "Location",
+            CategoryId = _defaultCategory.Id,
             WhatsAppNumber = "invalid-phone",
             Status = PropertyStatus.Draft
         };
@@ -88,7 +161,7 @@ public class PropertyServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetPublicPropertiesAsync_ReturnsOnlyActiveProperties_ExcludesDraftAndInactive()
+    public async Task GetPublicPropertiesAsync_ReturnsOnlyActiveProperties_WithCategoryAndWhatsApp()
     {
         // Arrange
         var activeProperty = new Property
@@ -97,6 +170,7 @@ public class PropertyServiceTests : IDisposable
             Name = "Active Resort",
             Description = "A publicly visible resort in Wagamon.",
             Location = "Lake Road",
+            CategoryId = _defaultCategory.Id,
             WhatsAppNumber = "+919876543210",
             Status = PropertyStatus.Active,
             CreatedAt = DateTime.UtcNow
@@ -107,6 +181,7 @@ public class PropertyServiceTests : IDisposable
             Name = "Draft Hidden Property",
             Description = "Should not be visible to the public.",
             Location = "Secret Road",
+            CategoryId = _defaultCategory.Id,
             WhatsAppNumber = "+919876543210",
             Status = PropertyStatus.Draft,
             CreatedAt = DateTime.UtcNow
@@ -117,6 +192,7 @@ public class PropertyServiceTests : IDisposable
             Name = "Inactive Archived Property",
             Description = "Should not be visible to the public.",
             Location = "Old Road",
+            CategoryId = _defaultCategory.Id,
             WhatsAppNumber = "+919876543210",
             Status = PropertyStatus.Inactive,
             CreatedAt = DateTime.UtcNow
@@ -133,8 +209,56 @@ public class PropertyServiceTests : IDisposable
         Assert.NotNull(result.Data);
         Assert.Single(result.Data);
         Assert.Equal("Active Resort", result.Data[0].Name);
+        Assert.Equal(_defaultCategory.Id, result.Data[0].CategoryId);
+        Assert.Equal("Villa", result.Data[0].CategoryName);
         Assert.Contains("919876543210", result.Data[0].WhatsAppUrl);
         Assert.Contains("Active%20Resort", result.Data[0].WhatsAppUrl);
+    }
+
+    [Fact]
+    public async Task GetPublicPropertiesAsync_FilterByCategorySlug_ReturnsMatchingProperties()
+    {
+        // Arrange
+        var cottageCategory = new StayCategory
+        {
+            Id = Guid.NewGuid(),
+            Name = "Cottage",
+            Slug = "cottage",
+            IsActive = true
+        };
+        await _context.StayCategories.AddAsync(cottageCategory);
+
+        var villaProp = new Property
+        {
+            Id = Guid.NewGuid(),
+            Name = "Villa 1",
+            Description = "A nice villa.",
+            Location = "Valley",
+            CategoryId = _defaultCategory.Id,
+            WhatsAppNumber = "+919876543210",
+            Status = PropertyStatus.Active
+        };
+        var cottageProp = new Property
+        {
+            Id = Guid.NewGuid(),
+            Name = "Cottage 1",
+            Description = "A nice cottage.",
+            Location = "Pine Valley",
+            CategoryId = cottageCategory.Id,
+            WhatsAppNumber = "+919876543210",
+            Status = PropertyStatus.Active
+        };
+
+        await _context.Properties.AddRangeAsync(villaProp, cottageProp);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _propertyService.GetPublicPropertiesAsync(categorySlug: "cottage");
+
+        // Assert
+        Assert.True(result.Success);
+        Assert.Single(result.Data);
+        Assert.Equal("Cottage 1", result.Data[0].Name);
     }
 
     [Fact]
@@ -147,6 +271,7 @@ public class PropertyServiceTests : IDisposable
             Name = "Status Test Property",
             Description = "Testing status changes between draft, active, and inactive.",
             Location = "Valley",
+            CategoryId = _defaultCategory.Id,
             WhatsAppNumber = "+919876543210",
             Status = PropertyStatus.Draft
         };
@@ -173,6 +298,7 @@ public class PropertyServiceTests : IDisposable
             Name = "Image Test Property",
             Description = "Testing automatic primary image assignment.",
             Location = "Valley",
+            CategoryId = _defaultCategory.Id,
             WhatsAppNumber = "+919876543210",
             Status = PropertyStatus.Draft
         };
@@ -199,6 +325,7 @@ public class PropertyServiceTests : IDisposable
             Name = "Primary Image Switch",
             Description = "Testing primary flag switching between multiple images.",
             Location = "Valley",
+            CategoryId = _defaultCategory.Id,
             WhatsAppNumber = "+919876543210",
             Status = PropertyStatus.Draft
         };
@@ -228,6 +355,7 @@ public class PropertyServiceTests : IDisposable
             Name = "Delete Test",
             Description = "Testing deletion cascade and Cloudinary cleanup.",
             Location = "Valley",
+            CategoryId = _defaultCategory.Id,
             WhatsAppNumber = "+919876543210",
             Status = PropertyStatus.Draft
         };

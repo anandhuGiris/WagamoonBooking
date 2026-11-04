@@ -27,9 +27,10 @@ public class PropertiesController : ControllerBase
         [FromQuery] int pageSize = 10,
         [FromQuery] string? search = null,
         [FromQuery] PropertyStatus? status = null,
+        [FromQuery] Guid? categoryId = null,
         CancellationToken ct = default)
     {
-        var result = await _propertyService.GetPropertiesAsync(page, pageSize, search, status, ct);
+        var result = await _propertyService.GetPropertiesAsync(page, pageSize, search, status, categoryId, ct);
         return Ok(result);
     }
 

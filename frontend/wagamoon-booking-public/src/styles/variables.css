@@ -1,0 +1,67 @@
+:root {
+  /* Colors: Warm Off-White / Cream Base */
+  --color-bg: #FAF8F5;
+  --color-bg-alt: #F4EFEA;
+  --color-bg-card: #FFFFFF;
+  --color-bg-card-hover: #FCFBF9;
+  --color-bg-dark: #122118;
+  --color-bg-subtle: #EDE8DE;
+
+  /* Forest Green Identity */
+  --color-primary: #1B3B2B;
+  --color-primary-dark: #12281D;
+  --color-primary-light: #2A5A43;
+  --color-primary-soft: #E9EFEA;
+
+  /* Muted Sage & Nature */
+  --color-sage: #7E9F8B;
+  --color-sage-light: #DFE8E2;
+  --color-sage-dark: #587563;
+
+  /* Warm Brass / Champagne Accents */
+  --color-accent: #C5A880;
+  --color-accent-light: #E4D5BF;
+  --color-accent-dark: #A3845C;
+
+  /* Typography / Text */
+  --color-text-main: #1C2420;
+  --color-text-muted: #5C6760;
+  --color-text-light: #8E9892;
+  --color-text-inverse: #FAF8F5;
+
+  /* Borders & Dividers */
+  --color-border: #E8E2D7;
+  --color-border-dark: #2F4D3C;
+  --color-border-subtle: #F0EAE1;
+
+  /* WhatsApp Green */
+  --color-whatsapp: #25D366;
+  --color-whatsapp-hover: #20BD5A;
+
+  /* Typography */
+  --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Elevation */
+  --shadow-sm: 0 2px 8px rgba(27, 59, 43, 0.04);
+  --shadow-md: 0 6px 20px rgba(27, 59, 43, 0.06);
+  --shadow-lg: 0 16px 36px rgba(27, 59, 43, 0.09);
+  --shadow-xl: 0 24px 50px rgba(27, 59, 43, 0.12);
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Container */
+  --container-max: 1240px;
+  --container-narrow: 920px;
+}
+

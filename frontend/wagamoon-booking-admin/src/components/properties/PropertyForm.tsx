@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -27,6 +27,8 @@ import { useNavigate } from 'react-router-dom';
 import { propertySchema, PropertyFormData } from '../../utils/validation';
 import { FacilitySelector } from './FacilitySelector';
 import { buildWhatsAppUrl } from '../../utils/whatsapp';
+import { categoryApi } from '../../api/categoryApi';
+import { StayCategory } from '../../types/Category';
 
 interface PropertyFormProps {
   initialValues?: Partial<PropertyFormData>;
@@ -44,6 +46,24 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({
   title = 'Property Details',
 }) => {
   const navigate = useNavigate();
+  const [categories, setCategories] = useState<StayCategory[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await categoryApi.getCategories(true);
+        if (res.success && res.data) {
+          setCategories(res.data);
+        }
+      } catch {
+        // Fallback
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const {
     register,
@@ -55,6 +75,7 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({
     resolver: zodResolver(propertySchema) as any,
     defaultValues: {
       name: initialValues?.name || '',
+      categoryId: initialValues?.categoryId || '',
       description: initialValues?.description || '',
       location: initialValues?.location || '',
       bedrooms: initialValues?.bedrooms ?? undefined,
@@ -122,6 +143,37 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({
                     placeholder="e.g. Lake View Villa"
                     error={!!errors.name}
                     helperText={errors.name?.message}
+                  />
+                </Grid>
+
+                <Grid size={{ xs: 12 }}>
+                  <Controller
+                    name="categoryId"
+                    control={control}
+                    render={({ field }) => (
+                      <FormControl fullWidth error={!!errors.categoryId}>
+                        <InputLabel id="property-category-label">Stay Category *</InputLabel>
+                        <Select
+                          {...field}
+                          labelId="property-category-label"
+                          label="Stay Category *"
+                          value={field.value || ''}
+                          disabled={categoriesLoading}
+                        >
+                          <MenuItem value="" disabled>
+                            <em>{categoriesLoading ? 'Loading categories...' : 'Select a stay category'}</em>
+                          </MenuItem>
+                          {categories.map((cat) => (
+                            <MenuItem key={cat.id} value={cat.id}>
+                              {cat.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        {errors.categoryId && (
+                          <FormHelperText>{errors.categoryId.message}</FormHelperText>
+                        )}
+                      </FormControl>
+                    )}
                   />
                 </Grid>
 
@@ -253,51 +305,41 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({
                 control={control}
                 render={({ field }) => (
                   <FormControl fullWidth error={!!errors.status}>
-                    <InputLabel id="status-label">Status</InputLabel>
-                    <Select {...field} labelId="status-label" label="Status">
-                      <MenuItem value="Draft">
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#f59e0b' }} />
-                          <span>Draft (Hidden from Public)</span>
-                        </Box>
-                      </MenuItem>
-                      <MenuItem value="Active">
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#10b981' }} />
-                          <span>Active (Visible on Public Website)</span>
-                        </Box>
-                      </MenuItem>
-                      <MenuItem value="Inactive">
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#94a3b8' }} />
-                          <span>Inactive (Archived)</span>
-                        </Box>
-                      </MenuItem>
+                    <InputLabel id="status-select-label">Status</InputLabel>
+                    <Select
+                      {...field}
+                      labelId="status-select-label"
+                      label="Status"
+                    >
+                      <MenuItem value="Draft">Draft (Hidden)</MenuItem>
+                      <MenuItem value="Active">Active (Publicly Visible)</MenuItem>
+                      <MenuItem value="Inactive">Inactive (Unlisted)</MenuItem>
                     </Select>
-                    {errors.status && <FormHelperText>{errors.status.message}</FormHelperText>}
+                    {errors.status && (
+                      <FormHelperText>{errors.status.message}</FormHelperText>
+                    )}
                   </FormControl>
                 )}
               />
             </CardContent>
           </Card>
 
-          {/* WhatsApp Direct Enquiry Card */}
+          {/* WhatsApp Enquiry Configuration */}
           <Card>
             <CardContent sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                <WhatsAppIcon sx={{ color: '#25D366', fontSize: 24 }} />
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                <WhatsAppIcon sx={{ color: '#25D366' }} />
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  WhatsApp Contact
+                  WhatsApp Enquiry
                 </Typography>
               </Box>
-
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5 }}>
-                Customer clicks on the public website directly open WhatsApp chat with this number.
+                Inbound customer enquiries from GoDaddy/Public listings will direct to this number.
               </Typography>
 
               <TextField
                 {...register('whatsAppNumber')}
-                label="WhatsApp Number *"
+                label="WhatsApp Phone Number *"
                 fullWidth
                 placeholder="+919876543210"
                 error={!!errors.whatsAppNumber}
@@ -305,51 +347,25 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({
                 sx={{ mb: 2 }}
               />
 
-              {previewWhatsAppUrl && (
-                <Box
-                  sx={{
-                    p: 2,
-                    backgroundColor: '#f0fdf4',
-                    border: '1px solid #bbf7d0',
-                    borderRadius: 2,
-                  }}
-                >
-                  <Typography variant="caption" sx={{ color: '#166534', fontWeight: 700, display: 'block', mb: 0.5 }}>
-                    PREVIEW GENERATED LINK:
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: '#15803d',
-                      wordBreak: 'break-all',
-                      display: 'block',
-                      fontFamily: 'monospace',
-                      mb: 1.5,
-                    }}
-                  >
-                    {previewWhatsAppUrl}
-                  </Typography>
+              <Divider sx={{ my: 2 }} />
 
-                  <Button
-                    variant="outlined"
-                    size="small"
+              <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', display: 'block', mb: 1 }}>
+                LIVE PREVIEW LINK
+              </Typography>
+              <Alert severity="info" sx={{ wordBreak: 'break-all', fontSize: '0.75rem', py: 0.5 }}>
+                {previewWhatsAppUrl ? (
+                  <a
                     href={previewWhatsAppUrl}
                     target="_blank"
-                    rel="noopener noreferrer"
-                    startIcon={<WhatsAppIcon sx={{ color: '#25D366' }} />}
-                    sx={{
-                      borderColor: '#86efac',
-                      color: '#166534',
-                      backgroundColor: '#ffffff',
-                      '&:hover': {
-                        backgroundColor: '#dcfce7',
-                      },
-                    }}
+                    rel="noreferrer"
+                    style={{ color: '#0f766e', textDecoration: 'underline' }}
                   >
-                    Test WhatsApp Link
-                  </Button>
-                </Box>
-              )}
+                    {previewWhatsAppUrl}
+                  </a>
+                ) : (
+                  'Enter a valid phone number to generate click-to-chat URL.'
+                )}
+              </Alert>
             </CardContent>
           </Card>
         </Grid>

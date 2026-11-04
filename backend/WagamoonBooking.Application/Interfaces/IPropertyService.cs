@@ -8,7 +8,14 @@ namespace WagamoonBooking.Application.Interfaces;
 
 public interface IPropertyService
 {
-    Task<ApiResponse<PagedResult<PropertyDto>>> GetPropertiesAsync(int page, int pageSize, string? search, PropertyStatus? status, CancellationToken ct = default);
+    Task<ApiResponse<PagedResult<PropertyDto>>> GetPropertiesAsync(
+        int page,
+        int pageSize,
+        string? search,
+        PropertyStatus? status,
+        Guid? categoryId = null,
+        CancellationToken ct = default);
+
     Task<ApiResponse<PropertyDetailDto>> GetPropertyByIdAsync(Guid id, CancellationToken ct = default);
     Task<ApiResponse<PropertyDetailDto>> CreatePropertyAsync(CreatePropertyDto dto, CancellationToken ct = default);
     Task<ApiResponse<PropertyDetailDto>> UpdatePropertyAsync(Guid id, UpdatePropertyDto dto, CancellationToken ct = default);
@@ -20,7 +27,11 @@ public interface IPropertyService
     Task<ApiResponse<bool>> SetPrimaryImageAsync(Guid propertyId, Guid imageId, CancellationToken ct = default);
     Task<ApiResponse<bool>> ReorderImagesAsync(Guid propertyId, List<Guid> imageIds, CancellationToken ct = default);
 
-    Task<ApiResponse<List<PublicPropertyDto>>> GetPublicPropertiesAsync(CancellationToken ct = default);
+    Task<ApiResponse<List<PublicPropertyDto>>> GetPublicPropertiesAsync(
+        Guid? categoryId = null,
+        string? categorySlug = null,
+        CancellationToken ct = default);
+
     Task<ApiResponse<PublicPropertyDto>> GetPublicPropertyByIdAsync(Guid id, CancellationToken ct = default);
 
     Task<ApiResponse<DashboardStatsDto>> GetDashboardStatsAsync(CancellationToken ct = default);

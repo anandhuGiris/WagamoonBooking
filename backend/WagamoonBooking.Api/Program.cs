@@ -148,16 +148,8 @@ using (var scope = app.Services.CreateScope())
 
     try
     {
-        if (context.Database.IsSqlite())
-        {
-            logger.LogInformation("Using SQLite database. Ensuring schema is created...");
-            await context.Database.EnsureCreatedAsync();
-        }
-        else
-        {
-            logger.LogInformation("Applying SQL Server database migrations...");
-            await context.Database.MigrateAsync();
-        }
+        logger.LogInformation("Ensuring database schema exists ({Provider})...", context.Database.ProviderName);
+        await context.Database.EnsureCreatedAsync();
 
         logger.LogInformation("Seeding database...");
         await DatabaseSeeder.SeedAsync(context, passwordHasher, configuration, logger);
