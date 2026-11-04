@@ -262,25 +262,13 @@ export const Home: React.FC = () => {
 
           {/* Property Cards Grid */}
           {loading ? (
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                gap: '2rem',
-              }}
-            >
+            <div className="grid grid-3">
               <PropertyCardSkeleton />
               <PropertyCardSkeleton />
               <PropertyCardSkeleton />
             </div>
           ) : properties.length > 0 ? (
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                gap: '2rem',
-              }}
-            >
+            <div className="grid grid-3">
               {properties.map((property) => (
                 <PropertyCard key={property.id} property={property} featured />
               ))}
