@@ -289,7 +289,7 @@ export const Home: React.FC = () => {
                 We are currently curating upcoming properties for the upcoming season. Feel free to contact our team for private availability.
               </p>
               <WhatsAppButton
-                url="https://wa.me/919876543210?text=Hi%2C%20I%20would%20like%20to%20inquire%20about%20villa%20availability%20in%20Wagamon."
+                url="https://wa.me/917034749777?text=Hi%2C%20I%20would%20like%20to%20inquire%20about%20villa%20availability%20in%20Wagamon."
                 label="Inquire via WhatsApp"
               />
             </div>
@@ -618,7 +618,7 @@ export const Home: React.FC = () => {
 
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1rem' }}>
               <WhatsAppButton
-                url="https://wa.me/919876543210?text=Hi%2C%20I%20would%20like%20to%20plan%20a%20stay%20in%20Wagamon.%20Could%20you%20share%20current%20availability%3F"
+                url="https://wa.me/917034749777?text=Hi%2C%20I%20would%20like%20to%20plan%20a%20stay%20in%20Wagamon.%20Could%20you%20share%20current%20availability%3F"
                 label="Chat with Our Team on WhatsApp"
                 size="lg"
               />

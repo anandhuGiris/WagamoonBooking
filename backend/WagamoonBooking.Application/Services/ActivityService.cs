@@ -14,17 +14,22 @@ public class ActivityService : IActivityService
     private readonly ICloudinaryService _cloudinaryService;
     private readonly IValidator<CreateActivityDto> _createValidator;
     private readonly IValidator<UpdateActivityDto> _updateValidator;
+    private readonly string _publicWebsiteBaseUrl;
 
     public ActivityService(
         IApplicationDbContext context,
         ICloudinaryService cloudinaryService,
         IValidator<CreateActivityDto> createValidator,
-        IValidator<UpdateActivityDto> updateValidator)
+        IValidator<UpdateActivityDto> updateValidator,
+        string? publicWebsiteBaseUrl = null)
     {
         _context = context;
         _cloudinaryService = cloudinaryService;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _publicWebsiteBaseUrl = (publicWebsiteBaseUrl
+            ?? Environment.GetEnvironmentVariable("PUBLIC_WEBSITE_BASE_URL")
+            ?? "https://wagamoonbooking.com").TrimEnd('/');
     }
 
     public async Task<ApiResponse<PagedResult<ActivityDto>>> GetActivitiesAsync(
@@ -410,15 +415,9 @@ public class ActivityService : IActivityService
         return ApiResponse<PublicActivityDto>.SuccessResult(MapToPublicDto(activity));
     }
 
-    private static PublicActivityDto MapToPublicDto(Activity a)
+    private PublicActivityDto MapToPublicDto(Activity a)
     {
-        string whatsappUrl = string.Empty;
-        if (!string.IsNullOrWhiteSpace(a.WhatsAppNumber))
-        {
-            var cleanNumber = Regex.Replace(a.WhatsAppNumber, @"[^\d]", "");
-            var message = Uri.EscapeDataString($"Hi, I'm interested in booking the {a.Name} adventure in Wagamon.");
-            whatsappUrl = $"https://wa.me/{cleanNumber}?text={message}";
-        }
+        var whatsappUrl = BuildWhatsAppUrl(a);
 
         return new PublicActivityDto
         {
@@ -442,6 +441,21 @@ public class ActivityService : IActivityService
                 })
                 .ToList()
         };
+    }
+
+    private string BuildWhatsAppUrl(Activity a)
+    {
+        if (string.IsNullOrWhiteSpace(a.WhatsAppNumber))
+            return string.Empty;
+
+        var cleanNumber = Regex.Replace(a.WhatsAppNumber, @"[^\d]", "");
+        if (string.IsNullOrWhiteSpace(cleanNumber))
+            return string.Empty;
+
+        var productUrl = $"{_publicWebsiteBaseUrl}/activities/{a.Id}";
+        var message = $"Hello, I'm interested in booking the {a.Name} adventure in Wagamon.\n\nActivity Details: {productUrl}\n\nPlease share availability and pricing.";
+
+        return $"https://wa.me/{cleanNumber}?text={Uri.EscapeDataString(message)}";
     }
 
     private static string GenerateSlug(string text)

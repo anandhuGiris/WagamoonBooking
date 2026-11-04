@@ -47,5 +47,26 @@ public class PublicActivitiesController : ControllerBase
 
         return Ok(result);
     }
+
+    /// <summary>
+    /// Re-routes directly to WhatsApp with a pre-filled enquiry message containing the activity product link.
+    /// </summary>
+    [HttpGet("{id:guid}/whatsapp")]
+    public async Task<IActionResult> ReRouteToWhatsApp(Guid id, CancellationToken ct)
+    {
+        var result = await _activityService.GetPublicActivityByIdAsync(id, ct);
+        if (!result.Success || result.Data == null)
+        {
+            return NotFound(ApiResponse<string>.FailureResult("Activity not found or is currently inactive."));
+        }
+
+        var whatsappUrl = result.Data.WhatsAppUrl;
+        if (string.IsNullOrWhiteSpace(whatsappUrl))
+        {
+            return BadRequest(ApiResponse<string>.FailureResult("WhatsApp contact number is not configured for this activity."));
+        }
+
+        return Redirect(whatsappUrl);
+    }
 }
 
