@@ -58,12 +58,6 @@ export const LoginPage: React.FC = () => {
       setIsSubmitting(false);
     }
   };
-
-  const handleFillDemo = () => {
-    setValue('email', 'admin@example.com');
-    setValue('password', 'Admin@12345');
-  };
-
   return (
     <Box
       sx={{
