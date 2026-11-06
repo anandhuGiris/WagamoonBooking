@@ -61,12 +61,12 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
 });
 
-// Configure CORS for React Admin and GoDaddy public site
+// Configure CORS for React Admin and Public customer site
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        policy.SetIsOriginAllowed(_ => true) // allows localhost on any port & GoDaddy domains
+        policy.SetIsOriginAllowed(_ => true) // allows localhost and deployed web frontend origins
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();

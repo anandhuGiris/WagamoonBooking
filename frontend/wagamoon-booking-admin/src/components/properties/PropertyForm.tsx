@@ -334,7 +334,7 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({
                 </Typography>
               </Box>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5 }}>
-                Inbound customer enquiries from GoDaddy/Public listings will direct to this number.
+                Inbound customer enquiries from public listings will direct to this number.
               </Typography>
 
               <TextField

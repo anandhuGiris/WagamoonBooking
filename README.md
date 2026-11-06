@@ -1,42 +1,32 @@
 # Wagamon Booking — Property Management Admin & Public API
 
-A production-ready **Property Management Admin Application** and **Public REST API** built for **Wagamon Booking**. 
+A production-ready **Property Management Admin Application**, **Customer-Facing Public Website**, and **Public REST API** built for **Wagamon Booking**. 
 
-The system allows administrators to manage boutique properties, photo galleries, facilities, and publication statuses, while exposing an optimized, read-only public REST API that powers the existing **GoDaddy Website Builder** public site with direct **WhatsApp click-to-chat enquiry** links.
+The system allows administrators to manage boutique properties, adventure activities, categories, photo galleries, facilities, and publication statuses, while exposing an optimized, read-only public REST API that powers the customer-facing public website with direct **WhatsApp click-to-chat enquiry** links.
 
 > [!NOTE]
-> **Important Scope**: This is a property listing and enquiry management system. It does **not** handle room reservations, payments, or booking calendars. Customers discover properties on the GoDaddy website and click "Contact on WhatsApp" to initiate direct enquiries.
+> **Important Scope**: This is a property listing and enquiry management system. It does **not** handle room reservations, payments, or booking calendars. Customers discover properties and adventure activities on the public website and click "Enquire on WhatsApp" to initiate direct enquiries.
 
 ---
 
 ## Architecture Overview
 
 ```text
-                 EXISTING PUBLIC WEBSITE
-                  (GoDaddy Website Builder)
-                            │
-                            │ GET /api/public/properties
-                            ▼
-               ┌───────────────────────────────┐
-               │    ASP.NET Core Web API       │
-               │        (Backend)              │
-               │  /api/public/* (Anonymous)    │
-               │  /api/properties/* (Admin JWT)│
-               └──────────────┬────────────────┘
-                              │
-               ┌──────────────┴──────────────┐
-               │                             │
-               ▼                             ▼
-       SQL Server / SQLite              Cloudinary
-       (Database Persistence)      (CDN Image Storage)
-               ▲
-               │ REST API (JWT Authenticated)
-               │
-       ┌───────────────────────────────┐
-       │   React Admin Application     │
-       │     (Vite + TypeScript)       │
-       │      /dashboard, /properties  │
-       └───────────────────────────────┘
+            CUSTOMER PUBLIC WEBSITE                ADMIN WEB APP
+           (React 19 + Vite + TS)             (React 19 + MUI + TS)
+                     │                                   │
+                     │ GET /api/public/*                 │ /api/* (Admin JWT)
+                     ▼                                   ▼
+        ┌────────────────────────────────────────────────────────┐
+        │                 ASP.NET Core Web API                   │
+        │                       (Backend)                        │
+        └───────────────────────────┬────────────────────────────┘
+                                    │
+                     ┌──────────────┴──────────────┐
+                     │                             │
+                     ▼                             ▼
+             PostgreSQL / SQLite              Cloudinary
+            (Database Persistence)        (CDN Image Storage)
 ```
 
 ---
@@ -75,14 +65,22 @@ WagamoonBooking/
 │   └── WagamoonBooking.Tests/             # Unit and integration test suite (13 passing tests)
 │
 ├── frontend/
-│   └── wagamoon-booking-admin/            # React + Vite + TypeScript MUI admin app
+│   ├── wagamoon-booking-admin/            # React 19 + Vite + TypeScript MUI admin app
+│   │   ├── src/
+│   │   │   ├── api/                       # Axios client & typed endpoint services
+│   │   │   ├── auth/                      # AuthContext & ProtectedRoute
+│   │   │   ├── components/                # Layout, PropertyForm, Table, Uploader, Dialogs
+│   │   │   ├── pages/                     # Login, Dashboard, Properties, Categories, Activities, Admins
+│   │   │   ├── theme/                     # MUI design system theme
+│   │   │   └── types/                     # TypeScript definitions
+│   │   └── dist/                          # Production bundle
+│   │
+│   └── wagamoon-booking-public/           # React 19 + Vite + TypeScript customer website
 │       ├── src/
-│       │   ├── api/                       # Axios client & typed endpoint services
-│       │   ├── auth/                      # AuthContext & ProtectedRoute
-│       │   ├── components/                # Layout, PropertyForm, Table, Uploader, Dialogs
-│       │   ├── pages/                     # Login, Dashboard, Properties, Add, Edit, Facilities
-│       │   ├── theme/                     # MUI design system theme
-│       │   └── types/                     # TypeScript definitions
+│       │   ├── api/                       # Public API consumer (properties, activities, categories)
+│       │   ├── components/                # Navbar, Hero, PropertyCard, ActivityCard, Footer
+│       │   ├── pages/                     # Home, Properties, Details, Activities, About, Contact
+│       │   └── styles/                    # Luxury resort styling & typography
 │       └── dist/                          # Production bundle
 │
 ├── .gitignore
@@ -218,66 +216,31 @@ During initial startup, the database is automatically seeded with default creden
 - `PUT /api/facilities/{id}` — Update facility name or active status.
 - `DELETE /api/facilities/{id}` — Delete facility.
 
-### 5. Public API (Zero Authentication — For GoDaddy Website)
-- `GET /api/public/properties` — Returns **only Active** properties. Inactive and Draft properties are strictly excluded.
+### 5. Public API (Zero Authentication — For Public Website)
+- `GET /api/public/properties` — Returns **only Active** properties. Inactive and Draft properties are strictly excluded. Supports `categoryId` / `categorySlug` filter.
 - `GET /api/public/properties/{id}` — Details of single Active property.
+- `GET /api/public/activities` — Returns **only Active** adventure activities.
+- `GET /api/public/activities/{id}` — Details of single Active adventure activity.
+- `GET /api/categories` — List active stay categories.
 
 ---
 
-## GoDaddy Website Integration Guide
+## Public Website (`frontend/wagamoon-booking-public`)
 
-To render live properties on your GoDaddy website:
+A standalone React 19 + TypeScript + Vite luxury boutique resort website for customers.
 
-1. Open your **GoDaddy Website Builder**.
-2. Add an **"HTML / Custom Code"** section where you want property cards to appear.
-3. Paste the following snippet:
+Features:
+- **Curated Property Showcase**: Fetches only active villas and stays with high-resolution photography.
+- **Adventure Activities**: Highlights thrilling Wagamon experiences and guided activities.
+- **Direct WhatsApp Booking**: Generates direct WhatsApp click-to-chat links for instantaneous customer enquiries.
+- **Mobile Optimized**: Responsive luxury resort design.
 
-```html
-<!-- Wagamon Booking GoDaddy Custom HTML Block -->
-<div id="wagamon-properties-container"></div>
-<script>
-  (async function() {
-    const API_URL = 'https://api.yourdomain.com/api/public/properties'; // Replace with your production API URL
-    const container = document.getElementById('wagamon-properties-container');
-    try {
-      const response = await fetch(API_URL);
-      const res = await response.json();
-      if (!res.success || !res.data || res.data.length === 0) {
-        container.innerHTML = '<p style="text-align:center;padding:2rem;color:#64748b;">No properties currently available.</p>';
-        return;
-      }
-      
-      const cards = res.data.map(p => {
-        const primaryImg = p.images.find(img => img.isPrimary)?.url || (p.images[0]?.url || 'https://via.placeholder.com/600x400?text=Wagamon+Property');
-        const facilities = p.facilities.map(f => '<span style="display:inline-block;background:#f1f5f9;color:#334155;font-size:12px;padding:3px 8px;border-radius:4px;margin:2px 4px 2px 0;">✓ ' + f + '</span>').join('');
-        
-        return `
-          <div style="background:#ffffff;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-            <div style="height:220px;overflow:hidden;position:relative;">
-              <img src="${primaryImg}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;" />
-            </div>
-            <div style="padding:20px;flex-grow:1;display:flex;flex-direction:column;">
-              <h3 style="margin:0 0 6px 0;font-size:20px;color:#0f172a;">${p.name}</h3>
-              <p style="margin:0 0 12px 0;color:#64748b;font-size:14px;">📍 ${p.location}</p>
-              <p style="margin:0 0 16px 0;color:#334155;font-size:14px;line-height:1.5;flex-grow:1;">${p.description}</p>
-              <div style="margin-bottom:18px;">${facilities}</div>
-              <a href="${p.whatsAppUrl}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;justify-content:center;background:#25D366;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:bold;font-size:15px;box-shadow:0 4px 12px rgba(37,211,102,0.3);text-align:center;">
-                💬 Contact on WhatsApp
-              </a>
-            </div>
-          </div>
-        `;
-      }).join('');
-      
-      container.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:24px;padding:16px 0;">' + cards + '</div>';
-    } catch (e) {
-      container.innerHTML = '<p style="color:#ef4444;text-align:center;padding:2rem;">Unable to load properties. Please try again later.</p>';
-    }
-  })();
-</script>
+To run locally:
+```bash
+cd frontend/wagamoon-booking-public
+npm install
+npm run dev
 ```
-
-4. Publish your GoDaddy website. Whenever an admin creates or activates a property in the admin dashboard, it will appear on the website automatically.
 
 ---
 

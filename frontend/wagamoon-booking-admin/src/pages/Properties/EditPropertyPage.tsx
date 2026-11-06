@@ -12,7 +12,7 @@ import {
   Chip,
 } from '@mui/material';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import WebhookRoundedIcon from '@mui/icons-material/WebhookRounded';
+import LaunchRoundedIcon from '@mui/icons-material/LaunchRounded';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { propertyApi } from '../../api/propertyApi';
 import { PropertyDetail, PropertyImage } from '../../types/Property';
@@ -21,7 +21,6 @@ import { PropertyImageUploader } from '../../components/properties/PropertyImage
 import { LoadingState } from '../../components/common/LoadingState';
 import { ErrorState } from '../../components/common/ErrorState';
 import { PropertyFormData } from '../../utils/validation';
-import { GoDaddyPreviewModal } from '../../components/properties/GoDaddyPreviewModal';
 
 export const EditPropertyPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -33,7 +32,6 @@ export const EditPropertyPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<number>(0);
-  const [previewOpen, setPreviewOpen] = useState<boolean>(false);
 
   // Check if just created from query param
   const justCreated = new URLSearchParams(location.search).get('created') === 'true';
@@ -175,11 +173,14 @@ export const EditPropertyPage: React.FC = () => {
         <Button
           variant="outlined"
           color="secondary"
-          startIcon={<WebhookRoundedIcon />}
-          onClick={() => setPreviewOpen(true)}
+          startIcon={<LaunchRoundedIcon />}
+          component="a"
+          href={import.meta.env.VITE_PUBLIC_WEBSITE_URL ? `${import.meta.env.VITE_PUBLIC_WEBSITE_URL}/properties/${property.id}` : `https://wagamoonbooking.com/properties/${property.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
           sx={{ fontWeight: 700 }}
         >
-          GoDaddy Live Preview
+          View on Website
         </Button>
       </Box>
 
@@ -225,7 +226,7 @@ export const EditPropertyPage: React.FC = () => {
               Property Photo Gallery
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Upload high-resolution property pictures. Reorder them using arrows, or choose which image appears as the Primary cover on the GoDaddy website.
+              Upload high-resolution property pictures. Reorder them using arrows, or choose which image appears as the Primary cover on the public website.
             </Typography>
 
             <PropertyImageUploader
@@ -236,8 +237,6 @@ export const EditPropertyPage: React.FC = () => {
           </CardContent>
         </Card>
       )}
-
-      <GoDaddyPreviewModal open={previewOpen} onClose={() => setPreviewOpen(false)} />
 
       <Snackbar
         open={snackbar.open}

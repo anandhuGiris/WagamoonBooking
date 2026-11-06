@@ -23,7 +23,7 @@ public class PublicPropertiesController : ControllerBase
     }
 
     /// <summary>
-    /// Returns all Active properties for the public website / GoDaddy integration.
+    /// Returns all Active properties for the public customer-facing website.
     /// Inactive and Draft properties are strictly excluded.
     /// </summary>
     [HttpGet]
