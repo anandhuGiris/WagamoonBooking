@@ -22,7 +22,7 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
 import PauseCircleFilledRoundedIcon from '@mui/icons-material/PauseCircleFilledRounded';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
-import WebhookRoundedIcon from '@mui/icons-material/WebhookRounded';
+import LaunchRoundedIcon from '@mui/icons-material/LaunchRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { useNavigate } from 'react-router-dom';
@@ -30,14 +30,12 @@ import { propertyApi } from '../../api/propertyApi';
 import { DashboardStats, Property, PropertyStatus } from '../../types/Property';
 import { LoadingState } from '../../components/common/LoadingState';
 import { ErrorState } from '../../components/common/ErrorState';
-import { GoDaddyPreviewModal } from '../../components/properties/GoDaddyPreviewModal';
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [previewOpen, setPreviewOpen] = useState<boolean>(false);
 
   useEffect(() => {
     loadStats();
@@ -111,7 +109,7 @@ export const DashboardPage: React.FC = () => {
       count: stats?.activeProperties || 0,
       icon: <CheckCircleRoundedIcon sx={{ fontSize: 30, color: '#10b981' }} />,
       bgColor: '#d1fae5',
-      subtitle: 'Exposed to GoDaddy Website',
+      subtitle: 'Visible on Public Website',
       highlight: true,
     },
     {
@@ -156,11 +154,14 @@ export const DashboardPage: React.FC = () => {
           <Button
             variant="outlined"
             color="secondary"
-            startIcon={<WebhookRoundedIcon />}
-            onClick={() => setPreviewOpen(true)}
+            startIcon={<LaunchRoundedIcon />}
+            component="a"
+            href={import.meta.env.VITE_PUBLIC_WEBSITE_URL || 'https://wagamoonbooking.com'}
+            target="_blank"
+            rel="noopener noreferrer"
             sx={{ fontWeight: 700 }}
           >
-            GoDaddy Live Preview
+            View Public Site
           </Button>
 
           <Button
@@ -349,8 +350,6 @@ export const DashboardPage: React.FC = () => {
           </Table>
         </TableContainer>
       </Card>
-
-      <GoDaddyPreviewModal open={previewOpen} onClose={() => setPreviewOpen(false)} />
     </Box>
   );
 };

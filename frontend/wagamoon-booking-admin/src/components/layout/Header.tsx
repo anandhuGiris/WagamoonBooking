@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import WebhookRoundedIcon from '@mui/icons-material/WebhookRounded';
+import LaunchRoundedIcon from '@mui/icons-material/LaunchRounded';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
@@ -18,16 +18,15 @@ import { useAuth } from '../../auth/AuthContext';
 interface HeaderProps {
   onDrawerToggle: () => void;
   title?: string;
-  onOpenGoDaddyPreview?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   onDrawerToggle,
   title = 'Wagamon Booking Admin',
-  onOpenGoDaddyPreview,
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const publicWebsiteUrl = import.meta.env.VITE_PUBLIC_WEBSITE_URL || 'https://wagamoonbooking.com';
 
   return (
     <AppBar
@@ -61,28 +60,29 @@ export const Header: React.FC<HeaderProps> = ({
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          {onOpenGoDaddyPreview && (
-            <Tooltip title="Preview how active properties look on your GoDaddy website">
-              <Button
-                variant="outlined"
-                color="secondary"
-                size="small"
-                startIcon={<WebhookRoundedIcon />}
-                onClick={onOpenGoDaddyPreview}
-                sx={{
-                  display: { xs: 'none', sm: 'flex' },
-                  borderColor: '#c7d2fe',
-                  backgroundColor: '#eef2ff',
-                  '&:hover': {
-                    backgroundColor: '#e0e7ff',
-                    borderColor: '#a5b4fc',
-                  },
-                }}
-              >
-                GoDaddy Preview
-              </Button>
-            </Tooltip>
-          )}
+          <Tooltip title="Open customer-facing public website">
+            <Button
+              variant="outlined"
+              color="secondary"
+              size="small"
+              startIcon={<LaunchRoundedIcon />}
+              component="a"
+              href={publicWebsiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                display: { xs: 'none', sm: 'flex' },
+                borderColor: '#c7d2fe',
+                backgroundColor: '#eef2ff',
+                '&:hover': {
+                  backgroundColor: '#e0e7ff',
+                  borderColor: '#a5b4fc',
+                },
+              }}
+            >
+              View Website
+            </Button>
+          </Tooltip>
 
           <Button
             variant="contained"

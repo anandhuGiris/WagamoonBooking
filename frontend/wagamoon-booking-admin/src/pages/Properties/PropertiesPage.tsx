@@ -77,7 +77,7 @@ export const PropertiesPage: React.FC = () => {
       if (res.success) {
         setSnackbar({
           open: true,
-          message: `Property status updated to ${newStatus}. ${newStatus === 'Active' ? 'Now visible on public GoDaddy site!' : 'Hidden from public site.'}`,
+          message: `Property status updated to ${newStatus}. ${newStatus === 'Active' ? 'Now visible on public website!' : 'Hidden from public website.'}`,
           severity: 'success',
         });
         loadProperties();
